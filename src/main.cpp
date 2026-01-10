@@ -7,6 +7,7 @@
 #include "./command/base/CommandManager.h"
 
 #include "./command/GrabCommand.h"
+#include "./command/HelpCommand.h"
 #include "./argument/ArgumentParser.h"
 
 
@@ -17,7 +18,7 @@ int main(int argc, char* argv[]) {
 
         // populate the command manager
         cmdManager.add(std::make_unique<GrabCommand>());
-        cmdManager.add(std::make_unique<GrabCommand>());
+        cmdManager.add(std::make_unique<HelpCommand>(cmdManager.commands()));
 
         cmdManager.execute();
     } catch (const std::exception& e) {

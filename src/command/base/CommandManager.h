@@ -9,7 +9,6 @@
 
 #include "./Command.h"
 #include "../../argument/ArgumentParser.h"
-
 /**
  * @brief Class that manages a unordered hashmap of
  *        Commands.
@@ -35,9 +34,13 @@ public:
         if (it == commandMap.end()) {
             throw std::runtime_error("Command not found: " + argData.cmd);
         }
-        
+
         // call the commands execute with the argument data
         it->second->execute(argData);
+    }
+
+    const std::unordered_map<std::string, std::unique_ptr<Command>>& commands() const {
+        return commandMap;
     }
     
 private:

@@ -22,7 +22,7 @@ public:
     std::string name() const override {
         return "grab";
     }
-    
+
     void execute(const ArgumentParser& args) override {
         const std::string cwd = fs::current_path();
 
@@ -37,6 +37,13 @@ public:
             default:
                 throw std::logic_error("Unknown TypeFlag");
         }
+    }
+
+    std::string description() const override {
+        return "Searches for files in bulk by name or extension. Defaults by extension if no flag is provided.";
+    }
+    std::string usage() const override {
+        return "wiff grab (-e <ext> | -n <name>) [--size|--date|--alpha]";
     }
 private:
     void handleExtension(const ArgumentParser& args, const std::string& dirPath) {

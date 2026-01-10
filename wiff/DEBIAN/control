@@ -1,0 +1,5 @@
+Package: wiff
+Version: 0.1
+Maintainer: Chris Eberle <ceber042@mtroyal.ca>
+Architecture: amd64
+Description: wiff does it

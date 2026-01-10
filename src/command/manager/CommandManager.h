@@ -15,7 +15,7 @@
  */
 class CommandManager {
 public:
-    CommandManager(int argc, char* argv[]) : argData(argc,argv) {}
+    CommandManager(int argc, char* argv[]);
     ~CommandManager () = default;
 
     void add(std::unique_ptr<Command> cmd);

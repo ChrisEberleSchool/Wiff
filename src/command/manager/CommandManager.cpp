@@ -17,7 +17,7 @@ void CommandManager::add(std::unique_ptr<Command> cmd) {
 void CommandManager::execute() {
     auto it = commandMap.find(argData.cmd);
     if (it == commandMap.end()) {
-        throw std::runtime_error("Command not found: " + argData.cmd);
+        throw std::runtime_error("Command not found. Try: wiff help" + argData.cmd);
     }
     // call the commands execute with the argument data
     it->second->execute(argData);

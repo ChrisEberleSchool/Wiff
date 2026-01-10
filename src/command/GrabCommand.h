@@ -11,17 +11,19 @@
 #include <sstream>
 
 #include "./base/Command.h"
-#include "../argument/Arguments.h"
+#include "../argument/ArgumentParser.h"
 
 namespace fs = std::filesystem;
 
-const std::string GRAB_COMMAND = "grab";
-
 class GrabCommand : public Command {
 public:
-    GrabCommand() { cmdName = "grab"; }
+    GrabCommand() = default;
 
-    void execute(const Arguments& args) override {
+    std::string name() const override {
+        return "grab";
+    }
+    
+    void execute(const ArgumentParser& args) override {
         const std::string cwd = fs::current_path();
 
         // switch handling depending on type
@@ -37,18 +39,15 @@ public:
         }
     }
 private:
-    void handleExtension(const Arguments& args, const std::string& cwd) {
+    void handleExtension(const ArgumentParser& args, const std::string& dirPath) {
         // Table header
-        std::cout << std::left
-                  << std::setw(20) << "Filename"
-                  << std::setw(12) << "Size"
-                  << std::setw(14) << "Date"
-                  << "Path\n";
-        std::cout << std::string(60, '-') << '\n';
+        printTableHeader();
 
-        for (const auto& dir_entry : fs::recursive_directory_iterator{cwd}) {
+        // recursive loop starting from provided directory
+        for (const auto& dir_entry : fs::recursive_directory_iterator{dirPath}) {
             std::string extension = dir_entry.path().extension().string();
-
+            
+            // TODO:: Handle both include the . and not including the .
             if (extension == "." + args.target) {
                 const auto& path = dir_entry.path();
                 std::cout << std::left
@@ -61,19 +60,16 @@ private:
         }
     }
 
-    void handleFileName(const Arguments& args, const std::string& cwd) {
-        std::cout << std::left
-                  << std::setw(20) << "Filename"
-                  << std::setw(12) << "Size"
-                  << std::setw(14) << "Date"
-                  << "Path\n";
-        std::cout << std::string(60, '-') << '\n';
-    
-        for (const auto& dir_entry : fs::recursive_directory_iterator{cwd, fs::directory_options::skip_permission_denied}) {
+    void handleFileName(const ArgumentParser& args, const std::string& dirPath) {
+        // Table header
+        printTableHeader();
+        
+        // recursive loop starting from the provided directory
+        for (const auto& dir_entry : fs::recursive_directory_iterator{dirPath, fs::directory_options::skip_permission_denied}) {
             if (!fs::is_regular_file(dir_entry.status()))
                 continue;
         
-            std::string file = dir_entry.path().filename().string();
+            std::string file = dir_entry.path().stem().string();
             if (file == args.target) {
                 const auto& path = dir_entry.path();
                 std::cout << std::left
@@ -86,7 +82,21 @@ private:
         }
     }
 
+    /**
+     * @brief Prints to terminal the UI table for found files
+     */
+    void printTableHeader() {
+        std::cout << std::left
+                  << std::setw(20) << "Filename"
+                  << std::setw(12) << "Size"
+                  << std::setw(14) << "Date"
+                  << "Path\n";
+        std::cout << std::string(60, '-') << '\n';
+    }
 
+    /**
+     * @brief creates the string representing the files size
+     */
     std::string formatSize(uintmax_t bytes) {
         constexpr double KB = 1024.0;
         constexpr double MB = KB * 1024.0;
@@ -102,6 +112,9 @@ private:
         return out.str();
     }
 
+    /**
+     * @brief Formats the date section
+     */
     std::string formatDate(const fs::file_time_type& ftime) {
         using namespace std::chrono;
 
@@ -118,17 +131,11 @@ private:
         return out.str();
     }
 };
-
-
 /*
-    wiff grab <input>
-        # Lists files in current directory (or specified directory)
-        # Default sorting: alphabetically
-        Example output:
-
-            Filename             Size       Date        Path
-            ------------------------------------------------------------
-            hello.txt            0.1MB      2023-06-12  ./Documents
-            world.log            2.3MB      2024-01-03  ./Logs
-            project.cpp          12KB       2024-01-10  ~/Projects
+    Example output:
+        Filename             Size       Date        Path
+        ------------------------------------------------------------
+        hello.txt            0.1MB      2023-06-12  ./Documents
+        world.log            2.3MB      2024-01-03  ./Logs
+        project.cpp          12KB       2024-01-10  ~/Projects
 */

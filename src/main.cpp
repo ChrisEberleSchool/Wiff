@@ -7,20 +7,24 @@
 #include "./command/base/CommandManager.h"
 
 #include "./command/GrabCommand.h"
-#include "./argument/Arguments.h"
+#include "./argument/ArgumentParser.h"
 
 
 int main(int argc, char* argv[]) {
+    try {
+        //create the managers and arguments class
+        CommandManager cmdManager(argc, argv);
 
-    //create the managers and arguments class
-    Arguments arguments(argc, argv);
-    CommandManager cmdManager(arguments);
+        // populate the command manager
+        cmdManager.add(std::make_unique<GrabCommand>());
+        cmdManager.add(std::make_unique<GrabCommand>());
 
-    // populate the command manager
-    cmdManager.add(std::make_unique<GrabCommand>());
+        cmdManager.execute();
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << "\n";
+        return 1;
+    }
 
-    Command& cmd = cmdManager.getRef();
-    cmd.execute(arguments);
 
     return 0;
 }

@@ -8,7 +8,7 @@
 #include <stdexcept>
 
 #include "./Command.h"
-#include "../../argument/Arguments.h"
+#include "../../argument/ArgumentParser.h"
 
 /**
  * @brief Class that manages a unordered hashmap of
@@ -16,23 +16,31 @@
  */
 class CommandManager {
 public:
-    CommandManager(Arguments& arguments) : arguments(arguments) {}
+    CommandManager(int argc, char* argv[]) : argData(argc,argv) {}
     ~CommandManager () = default;
 
     void add(std::unique_ptr<Command> cmd) {
-        commandMap[cmd->getCmdName()] = std::move(cmd);
+        // grab a copy of cmdName for quick access
+        std::string cmdName = cmd->name();
+
+        //check for duplicate command adding
+        if(commandMap.contains(cmdName)) {
+            throw std::logic_error("Duplicate command Registered: '"+cmdName);
+        }
+        commandMap[cmd->name()] = std::move(cmd);
     }
 
-    // Grabs a reference to the command the user inputted
-    Command& getRef() {
-        auto it = commandMap.find(arguments.cmd);
+    void execute() {
+        auto it = commandMap.find(argData.cmd);
         if (it == commandMap.end()) {
-            throw std::runtime_error("Command not found: " + arguments.cmd);
+            throw std::runtime_error("Command not found: " + argData.cmd);
         }
-        return *(it->second);
+        
+        // call the commands execute with the argument data
+        it->second->execute(argData);
     }
     
 private:
     std::unordered_map<std::string, std::unique_ptr<Command>> commandMap;
-    Arguments& arguments;
+    ArgumentParser argData;
 };

@@ -29,9 +29,9 @@ enum struct FilterFlag {
         --date           # Sort results by date descending (newest first)
         --alpha          # Sort results alphabetically (default)
 */
-struct Arguments {
+struct ArgumentParser {
 public:
-    Arguments(int argc, char* argv[]) : filterFlag(FilterFlag::None), typeFlag(TypeFlag::Extension) {
+    ArgumentParser(int argc, char* argv[]) : filterFlag(FilterFlag::None), typeFlag(TypeFlag::Extension) {
 
         // invalid args case
         if (argc < 3) {

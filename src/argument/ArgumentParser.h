@@ -34,15 +34,14 @@ public:
     ArgumentParser(int argc, char* argv[]) : filterFlag(FilterFlag::None), typeFlag(TypeFlag::Extension) {
 
         // invalid args case
-        if (argc < 3) {
-            throw std::runtime_error("Invalid Command: To see commands type  -> wiff help \n");
+        if (argc < 2) {
+            throw std::runtime_error("No command provided. Try: wiff help");
         }
 
-        // Grab the command
         cmd = argv[1];
 
         // initialize the command map
-        commands = {
+        flagHandlers = {
             { "-e", [this]() { typeFlag = TypeFlag::Extension; } },
             { "-n", [this]() { typeFlag = TypeFlag::FileName; } },
 
@@ -55,8 +54,8 @@ public:
         for(int i = 2; i < argc; i++) {
             std::string arg = argv[i];
 
-            auto it = commands.find(arg);
-            if(it != commands.end()) {
+            auto it = flagHandlers.find(arg);
+            if(it != flagHandlers.end()) {
                 it->second();
             } else {
                 // if target data has already been produced skip
@@ -66,11 +65,6 @@ public:
                 }
             }
         }
-
-        // in the case where no target data was inputted throw a runtime error.
-        if (target.empty()) {
-            throw std::runtime_error("Invalid Command: To see commands type  -> wiff help \n");
-        }
     }
 
     std::string cmd;
@@ -79,6 +73,6 @@ public:
     std::string target;
 private:
     using func = std::function<void()>;
-    std::unordered_map<std::string, func> commands;
+    std::unordered_map<std::string, func> flagHandlers;
     bool targetDefined = false;
 };

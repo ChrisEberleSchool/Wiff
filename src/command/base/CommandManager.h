@@ -9,8 +9,6 @@
 
 #include "./Command.h"
 #include "../../argument/ArgumentParser.h"
-#include "../HelpCommand.h"
-
 /**
  * @brief Class that manages a unordered hashmap of
  *        Commands.
@@ -32,24 +30,17 @@ public:
     }
 
     void execute() {
-
         auto it = commandMap.find(argData.cmd);
         if (it == commandMap.end()) {
             throw std::runtime_error("Command not found: " + argData.cmd);
-        }
-
-        // if command is help call member function and return 
-        if(argData.cmd == "help") {
-            help();
-            return;
         }
 
         // call the commands execute with the argument data
         it->second->execute(argData);
     }
 
-    void help() {
-        
+    const std::unordered_map<std::string, std::unique_ptr<Command>>& commands() const {
+        return commandMap;
     }
     
 private:

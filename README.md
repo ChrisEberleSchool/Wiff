@@ -17,7 +17,7 @@
 # Downloading & Installing Wiff (USER)
 1. Go to terminal and wget the .deb file
     ```
-        wget https://github.com/ChrisEberleSchool/Wiff/releases/download/v0.1/wiff.deb
+        wget https://github.com/ChrisEberleSchool/Wiff/releases/download/v0.2/wiff.deb
     ```
 2. Install it
     ```

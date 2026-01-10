@@ -17,32 +17,27 @@
 # Downloading & Installing Wiff (USER)
 1. Go to terminal and wget the .deb file
     ```
-        wget https://github.com/ChrisEberleSchool/Wiff/releases/download/v0.2/wiff.deb
+    wget https://github.com/ChrisEberleSchool/Wiff/releases/download/v0.2/wiff.deb
     ```
 2. Install it
     ```
-        sudo dpkg -i wiff.deb
+    sudo dpkg -i wiff.deb
     ```
 3. Test using the currently only working command
     ```
-        wiff grab <extension>
+    wiff grab <extension>
     ```
 
-# Building the .dev (DEVELOPER)
+# Building Wiff (DEVELOPER)
 1. Go to root dir
-2. build the exe
+2. build with the sh file
     ```
-        g++ -std=c++23 ./src/main.cpp -o ./wiff/usr/bin/wiff
+    ./build.sh
     ```
-3. then still in root build the deb
+5. To run Wiff localy enter:
     ```
-        dpkg-deb --build ./wiff 
+    ./wiff/usr/bin/wiff 
     ```
-4. Install the deb
-    ```
-        sudo dpkg -i ./wiff.deb  
-    ```
-5. Done!
 
 # Uninstall Wiff
     ```

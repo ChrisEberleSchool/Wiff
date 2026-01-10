@@ -3,12 +3,12 @@
 #include <memory>
 #include <vector>
 
-#include "./command/base/Command.h"
-#include "./command/base/CommandManager.h"
+#include "command/base/Command.h"
+#include "command/manager/CommandManager.h"
 
-#include "./command/GrabCommand.h"
-#include "./command/HelpCommand.h"
-#include "./argument/ArgumentParser.h"
+#include "command/grab/GrabCommand.h"
+#include "command/help/HelpCommand.h"
+#include "argument/ArgumentParser.h"
 
 
 int main(int argc, char* argv[]) {

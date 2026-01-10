@@ -6,9 +6,13 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable(wiff
-    src/main.cpp
+# Automatically find all .cpp files in src/ and subdirectories
+file(GLOB_RECURSE WIFF_SOURCES
+    ${CMAKE_SOURCE_DIR}/src/*.cpp
 )
+
+# --- ADD THE EXECUTABLE TARGET ---
+add_executable(wiff ${WIFF_SOURCES})
 
 target_include_directories(wiff PRIVATE
     ${CMAKE_SOURCE_DIR}/src

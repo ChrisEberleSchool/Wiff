@@ -2,7 +2,6 @@
 /build
 
 # Built binaries
-wiff
 /wiff/usr/bin/wiff
 
 # Debian packages

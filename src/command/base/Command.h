@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "../../argument/Arguments.h"
+#include "../../argument/ArgumentParser.h"
 
 /**
  * @brief Abstract class which defines a command
@@ -13,9 +13,10 @@ class Command {
 public:
 	virtual ~Command() = default;
 
-	virtual void execute(const Arguments& args) = 0;
+	virtual std::string name() const = 0; 
 
-    std::string getCmdName() const { return this->cmdName; }
-protected:    
-	std::string cmdName;
+	virtual std::string description() const = 0;
+    virtual std::string usage() const = 0;
+
+	virtual void execute(const ArgumentParser& args) = 0;
 };

@@ -43,3 +43,8 @@
         sudo dpkg -i ./wiff.deb  
     ```
 5. Done!
+
+# Uninstall Wiff
+    ```
+        sudo apt purge wiff
+    ```

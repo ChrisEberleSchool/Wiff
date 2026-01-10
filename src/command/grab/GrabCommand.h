@@ -27,7 +27,9 @@ struct FileEntry {
     std::string filename;
 };
 
-
+/**
+ * @brief Finder tool.
+ */
 class GrabCommand : public Command {
 public:
     std::vector<FileEntry> foundFiles;

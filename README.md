@@ -29,17 +29,21 @@
     ```
 
 # Building Wiff (DEVELOPER)
-1. Go to root dir
-2. build with the sh file
+1. Clone the source code:
+    ```
+    https://github.com/ChrisEberleSchool/Wiff.git
+    ```
+2. Go to root directory in terminal:
+3. Enter the build command:
     ```
     ./build.sh
     ```
-5. To run Wiff localy enter:
+5. To run Wiff locally enter:
     ```
     ./wiff/usr/bin/wiff 
     ```
 
-# Uninstall Wiff
+# Uninstall Wiff (USER)
     ```
         sudo apt purge wiff
     ```

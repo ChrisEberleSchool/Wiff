@@ -27,6 +27,9 @@
     ```
     wiff grab <extension>
     ```
+### **Uninstalling Wiff**
+    sudo apt purge wiff
+    
 
 # Building Wiff (DEVELOPER)
 1. Clone the source code:
@@ -45,5 +48,5 @@
 
 # Uninstall Wiff (USER)
     ```
-        sudo apt purge wiff
+    sudo apt purge wiff
     ```

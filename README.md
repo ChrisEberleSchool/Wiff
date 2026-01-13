@@ -4,7 +4,7 @@
 ## Requirements
 
 ### For Users
-- **Operating System:** Ubuntu/Debian (64-bit, `amd64`)  
+- **Operating System:** Ubuntu/Debian
 - **Privileges:** `sudo` access to install `.deb` packages  
 
 ### For Developers / Building from Source
@@ -14,7 +14,7 @@
 ---
 
 
-# Downloading & Installing Wiff (USER)
+# Downloading & Installing Wiff (USER)(64-bit, `amd64`)  
 1. Go to terminal and wget the .deb file
     ```
     wget https://github.com/ChrisEberleSchool/Wiff/releases/download/v0.2/wiff.deb
@@ -23,10 +23,31 @@
     ```
     sudo dpkg -i wiff.deb
     ```
-3. Test using the currently only working command
+3. Test a basic grab command
     ```
-    wiff grab <extension>
+    wiff grab -e txt --size ~/Documents
     ```
+### **Uninstalling Wiff**
+    sudo apt purge wiff
+
+# Downloading & Installing Wiff (USER)(From source)  
+1. Clone the repo
+    ```
+    git clone https://github.com/ChrisEberleSchool/Wiff.git
+    ```
+2. modify wiff/DEBIAN/control to use your CPU architecture
+    ```
+    Architecture: amd64
+    ```
+3. From root build
+    ```
+    ./build.sh
+    ```
+4. Run binary
+    ```
+    ./wiff/usr/bin/wiff
+    ```
+
 ### **Uninstalling Wiff**
     sudo apt purge wiff
     

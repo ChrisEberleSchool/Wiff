@@ -30,7 +30,7 @@
 ### **Uninstalling Wiff**
     sudo apt purge wiff
 
-# Downloading & Installing Wiff (USER)(From source)  
+# Downloading & Installing Wiff (From source)  
 1. Clone the repo
     ```
     git clone https://github.com/ChrisEberleSchool/Wiff.git
@@ -51,21 +51,6 @@
 ### **Uninstalling Wiff**
     sudo apt purge wiff
     
-
-# Building Wiff (DEVELOPER)
-1. Clone the source code:
-    ```
-    https://github.com/ChrisEberleSchool/Wiff.git
-    ```
-2. Go to root directory in terminal:
-3. Enter the build command:
-    ```
-    ./build.sh
-    ```
-5. To run Wiff locally enter:
-    ```
-    ./wiff/usr/bin/wiff 
-    ```
 
 # Wiff Guide
 

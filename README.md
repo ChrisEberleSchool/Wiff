@@ -47,11 +47,7 @@
     ```
     ./wiff/usr/bin/wiff
     ```
-
-### **Uninstalling Wiff**
-    sudo apt purge wiff
     
-
 # Wiff Guide
 
     grab 

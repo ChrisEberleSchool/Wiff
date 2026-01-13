@@ -47,7 +47,16 @@
     ```
     ./wiff/usr/bin/wiff
     ```
-    
+
+# Contributing guide
+
+## Commit messages
+```
+feat:	A new feature	Minor version bump
+fix:	A bug fix	Patch version bump
+chore:	Maintenance, refactoring, merges, build scripts, etc.	No version bump
+docs:	Documentation only	No version bump
+``` 
 # Wiff Guide
 
     grab 

@@ -11,7 +11,7 @@
 #include <sstream>
 
 #include "command/base/Command.h"
-#include "argument/ArgumentParser.h"
+#include "argument/ParsedArgs.h"
 
 namespace fs = std::filesystem;
 
@@ -19,7 +19,7 @@ class HelpCommand : public Command {
 public:
     HelpCommand( const std::unordered_map<std::string, std::unique_ptr<Command>>& commands);
 
-    void execute(const ArgumentParser& args) override;
+    void execute(const ParsedArgs& args) override;
     
     std::string name() const override;
     std::string description() const override;

@@ -1,8 +1,7 @@
 #include "./CommandManager.h"
 
 
-CommandManager::CommandManager(int argc, char* argv[])
-    : argData(argc, argv) {}
+CommandManager::CommandManager() {}
 
 void CommandManager::add(std::unique_ptr<Command> cmd) {
     // grab a copy of cmdName for quick access
@@ -14,13 +13,13 @@ void CommandManager::add(std::unique_ptr<Command> cmd) {
     commandMap[cmd->name()] = std::move(cmd);
 }
 
-void CommandManager::execute() {
-    auto it = commandMap.find(argData.cmd);
+void CommandManager::execute(const ParsedArgs& args) {
+    auto it = commandMap.find(args.command);
     if (it == commandMap.end()) {
-        throw std::runtime_error("Command not found. Try: wiff help" + argData.cmd);
+        throw std::runtime_error("Command not found. Try: wiff help" + args.command);
     }
     // call the commands execute with the argument data
-    it->second->execute(argData);
+    it->second->execute(args);
 }
 
 const std::unordered_map<std::string, std::unique_ptr<Command>>& CommandManager::commands() const {

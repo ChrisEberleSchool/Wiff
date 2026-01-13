@@ -3,15 +3,17 @@
 
 GrabCommand::GrabCommand() = default;
 std::string GrabCommand::name() const { return "grab"; }
-void GrabCommand::execute(const ArgumentParser& args) {
-    const std::string cwd = fs::current_path();
+void GrabCommand::execute(const ParsedArgs& args) {
     // switch handling depending on type
-    switch(args.typeFlag) {
-        case TypeFlag::Extension:
-            this->handleExtension(args, cwd);
+    switch(args.searchFlag) {
+        case SearchBy::Extension:
+            this->handleExtension(args);
             break;
-        case TypeFlag::FileName:
-            this->handleFileName(args, cwd);
+        case SearchBy::FileName:
+            this->handleFileName(args);
+            break;
+        case SearchBy::Stump:
+            this->handleStump(args);
             break;
         default:
             throw std::logic_error("Unknown TypeFlag");
@@ -26,41 +28,66 @@ std::string GrabCommand::usage() const {
     return "wiff grab (-e <ext> | -n <name>) [--size|--date|--alpha]";
 }
 
-void GrabCommand::handleExtension(const ArgumentParser& args, const std::string& dirPath) {
+void GrabCommand::handleExtension(const ParsedArgs& args) {
+    if(args.target.empty())
+        throw std::runtime_error("No extension provided for search.");
+
+    for (const auto& dir_entry : fs::recursive_directory_iterator{args.dirPath, fs::directory_options::skip_permission_denied}) {
+        if (!fs::is_regular_file(dir_entry.status()))
+            continue;
+
+        std::string ext = dir_entry.path().extension().string();
+        if (!ext.empty() && ext[0] == '.') ext = ext.substr(1);
+
+        if(ext != args.target) continue;
+
+        foundFiles.push_back(FileEntry(dir_entry));
+    }
+
+    sortFoundFiles(args);
+    benchmarkPrintMethod();
+}
+
+
+void GrabCommand::handleFileName(const ParsedArgs& args) {
     // recursive loop starting from provided directory
-    for (const auto& dir_entry : fs::recursive_directory_iterator{dirPath, fs::directory_options::skip_permission_denied}) {
+    for (
+        const auto& dir_entry :    
+        fs::recursive_directory_iterator {
+            args.dirPath, 
+            fs::directory_options::skip_permission_denied
+        }
+    ) {
         // skip non-files
         if (!fs::is_regular_file(dir_entry.status()))
             continue;
-        // ensure we can handle both <.ext> & <ext>
-        std::string targetExt = args.target;
-        if (!targetExt.empty() && targetExt[0] != '.')
-            targetExt = "." + targetExt;
+        
         // non matching file extensions skip
-        if(dir_entry.path().extension().string() != targetExt) continue;
+        if(dir_entry.path().filename().string() != args.target) continue;
         
         // add file to vector
         foundFiles.push_back(FileEntry(dir_entry));
     }
     
-    switch(args.filterFlag) {
-        case FilterFlag::Alpha:
-            std::sort(foundFiles.begin(), foundFiles.end(),
-                      [](const FileEntry& a, const FileEntry& b) { return a.filename < b.filename; });
-            break;
-        case FilterFlag::Date:
-            std::sort(foundFiles.begin(), foundFiles.end(),
-                      [](const FileEntry& a, const FileEntry& b) { return a.date_last_modified > b.date_last_modified; });
-            break;
-        case FilterFlag::Size:
-            std::sort(foundFiles.begin(), foundFiles.end(),
-                      [](const FileEntry& a, const FileEntry& b) { return a.size > b.size; });
-            break;
-        case FilterFlag::None:
-            break;
-        default:
-            break;
+    sortFoundFiles(args);
+    benchmarkPrintMethod();
+}
+
+void GrabCommand::handleStump(const ParsedArgs& args) {
+    // recursive loop starting from provided directory
+    for (const auto& dir_entry : fs::recursive_directory_iterator{args.dirPath, fs::directory_options::skip_permission_denied}) {
+        // skip non-files
+        if (!fs::is_regular_file(dir_entry.status()))
+            continue;
+        
+        // non matching file extensions skip
+        if(dir_entry.path().stem().string() != args.target) continue;
+        
+        // add file to vector
+        foundFiles.push_back(FileEntry(dir_entry));
     }
+    
+    sortFoundFiles(args);
     benchmarkPrintMethod();
 }
 
@@ -78,41 +105,26 @@ std::string GrabCommand::printFoundFiles() {
     return out.str();
 }
 
-void GrabCommand::handleFileName(const ArgumentParser& args, const std::string& dirPath) {
-    // recursive loop starting from provided directory
-    for (const auto& dir_entry : fs::recursive_directory_iterator{dirPath, fs::directory_options::skip_permission_denied}) {
-        // skip non-files
-        if (!fs::is_regular_file(dir_entry.status()))
-            continue;
-        
-        // non matching file extensions skip
-        if(dir_entry.path().stem().string() != args.target) continue;
-        
-        // add file to vector
-        foundFiles.push_back(FileEntry(dir_entry));
-    }
-    
-    switch(args.filterFlag) {
-        case FilterFlag::Alpha:
+void GrabCommand::sortFoundFiles(const ParsedArgs& args) {
+    switch(args.sortFlag) {
+        case SortBy::Alpha:
             std::sort(foundFiles.begin(), foundFiles.end(),
                       [](const FileEntry& a, const FileEntry& b) { return a.filename < b.filename; });
             break;
-        case FilterFlag::Date:
+        case SortBy::Date:
             std::sort(foundFiles.begin(), foundFiles.end(),
                       [](const FileEntry& a, const FileEntry& b) { return a.date_last_modified > b.date_last_modified; });
             break;
-        case FilterFlag::Size:
+        case SortBy::Size:
             std::sort(foundFiles.begin(), foundFiles.end(),
                       [](const FileEntry& a, const FileEntry& b) { return a.size > b.size; });
             break;
-        case FilterFlag::None:
+        case SortBy::None:
             break;
         default:
             break;
     }
-    benchmarkPrintMethod();
 }
-
 /**
  * @brief Prints to terminal the UI table for found files
  */

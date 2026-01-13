@@ -11,7 +11,7 @@
 #include <sstream>
 
 #include "command/base/Command.h"
-#include "argument/ArgumentParser.h"
+#include "argument/ParsedArgs.h"
 
 namespace fs = std::filesystem;
 
@@ -36,15 +36,17 @@ public:
 
     GrabCommand();
 
-    void execute(const ArgumentParser& args) override;
+    void execute(const ParsedArgs& args) override;
 
     std::string description() const override;
     std::string usage() const override;
     std::string name() const override;
 private:
-    void handleExtension(const ArgumentParser& args, const std::string& dirPath);
-    void handleFileName(const ArgumentParser& args, const std::string& dirPath);
+    void handleExtension(const ParsedArgs& args);
+    void handleFileName(const ParsedArgs& args);
+    void handleStump(const ParsedArgs& args);
 
+    void sortFoundFiles(const ParsedArgs& args);
     /**
      * @brief creates the string representing the files size
      */

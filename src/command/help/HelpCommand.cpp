@@ -8,7 +8,7 @@ std::string HelpCommand::name() const {
     return "help";
 }
 
-void HelpCommand::execute(const ArgumentParser& args) {
+void HelpCommand::execute(const ParsedArgs& args) {
     if (args.target.empty()) {
         //iterate over commands in the mao
         printOverview();

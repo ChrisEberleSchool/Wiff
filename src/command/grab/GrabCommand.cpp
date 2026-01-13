@@ -21,11 +21,11 @@ void GrabCommand::execute(const ParsedArgs& args) {
 }
 
 std::string GrabCommand::description() const {
-    return "Searches for files in bulk by name or extension. Defaults by extension if no flag is provided.";
+    return "Searches for files in bulk by name or extension. Defaults by full filename if no flag is provided. Also Defaults to searching current directory.";
 }
 
 std::string GrabCommand::usage() const {
-    return "wiff grab (-e <ext> | -n <name>) [--size|--date|--alpha]";
+    return "wiff grab [search-flag] [target] [sort-flag] [directory]";
 }
 
 void GrabCommand::handleExtension(const ParsedArgs& args) {

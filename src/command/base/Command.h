@@ -16,7 +16,7 @@ public:
 	virtual std::string name() const = 0; 
 
 	virtual std::string description() const = 0;
-  virtual std::string usage() const = 0;
+    virtual std::string usage() const = 0;
 
 	virtual void execute(const ParsedArgs& args) = 0;
 };

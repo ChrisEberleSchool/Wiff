@@ -17,7 +17,7 @@
 # Downloading & Installing Wiff (USER)(64-bit, `amd64`)  
 1. Go to terminal, and wget the .deb file
     ```
-    wget -P ~/Downloads https://github.com/ChrisEberleSchool/Wiff/releases/download/v0.2/wiff.deb
+    wget -P ~/Downloads https://github.com/ChrisEberleSchool/Wiff/releases/download/v1.0.0/wiff.deb
     ```
 2. Install it
     ```

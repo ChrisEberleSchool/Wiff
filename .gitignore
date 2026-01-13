@@ -6,3 +6,6 @@
 
 # Debian packages
 *.deb
+
+#NPM
+/node_modules

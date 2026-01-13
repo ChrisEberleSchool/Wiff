@@ -1,3 +1,11 @@
+---
+name: New Issue
+about: Report a bug or suggest a feature
+title: ""
+labels: ""
+assignees: ""
+---
+
 # New Issue
 
 Thanks for taking the time to report an issue or suggest a feature!  

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "../../argument/ArgumentParser.h"
+#include "../../argument/ParsedArgs.h"
 
 /**
  * @brief Abstract class which defines a command
@@ -16,7 +16,7 @@ public:
 	virtual std::string name() const = 0; 
 
 	virtual std::string description() const = 0;
-    virtual std::string usage() const = 0;
+  virtual std::string usage() const = 0;
 
-	virtual void execute(const ArgumentParser& args) = 0;
+	virtual void execute(const ParsedArgs& args) = 0;
 };

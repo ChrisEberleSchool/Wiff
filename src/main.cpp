@@ -8,24 +8,24 @@
 
 #include "command/grab/GrabCommand.h"
 #include "command/help/HelpCommand.h"
-#include "argument/ArgumentParser.h"
+#include "argument/ParsedArgs.h"
 
 
 int main(int argc, char* argv[]) {
     try {
+        ParsedArgs args(argc,argv);
         //create the managers and arguments class
-        CommandManager cmdManager(argc, argv);
-
+        CommandManager cmdManager;
+						
         // populate the command manager
         cmdManager.add(std::make_unique<GrabCommand>());
         cmdManager.add(std::make_unique<HelpCommand>(cmdManager.commands()));
-
-        cmdManager.execute();
+        cmdManager.execute(args);
     } catch (const std::exception& e) {
         std::cerr << e.what() << "\n";
         return 1;
     }
-
+	
 
     return 0;
 }

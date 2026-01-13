@@ -49,23 +49,25 @@
 # Wiff Guide
 
     grab 
-        Searches for files in bulk by name or extension. Defaults by extension if no flag is provided.
-              Usage:    wiff grab (-e <ext> | -n <name>) [--size|--date|--alpha]
+        Searches for files in bulk by name or extension. Defaults by full filename if no flag is provided.
+              Usage:   wiff grab [search-flag] [target] [sort-flag] [directory] 
 
     help    
         Shows help information for commands
               Usage:    wiff help [command]
 
 
-    SEARCH FLAGS:
+    SEARCH FLAGS: Defaulted to filename
         -e <extension>   # Find files by extension
-        -n <filename>    # Find files by exact name
+        -n <file-body>    # Find files by just the body name not extension
 
-    FILTER FLAGS:
+    SORT FLAGS:
         --size           # Sort results by file size descending
         --date           # Sort results by date descending (newest first)
         --alpha          # Sort results alphabetically (default)
 
-    EXAMPLE (Find all file with extension txt and sort by size):
-        
+    EXAMPLE (Find all files with extension txt in the current directory and sort by size):
         > wiff grab -e txt --size
+    
+    EXAMPLE (Find all files with name README in the Documents directory and sort by date):
+        > wiff grab -n README --size ~/Documents

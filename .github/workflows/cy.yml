@@ -9,7 +9,7 @@ on:
 jobs:
   # -------------------------------
   # CI / Build job (branch or tag)
-  # --------------------------------
+  # -------------------------------
   build:
     runs-on: ubuntu-latest
     strategy:

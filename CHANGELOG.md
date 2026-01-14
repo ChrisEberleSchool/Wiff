@@ -1,3 +1,41 @@
+## [1.1.5](https://github.com/ChrisEberleSchool/Wiff/compare/v1.1.4...v1.1.5) (2026-01-14)
+
+
+### Bug Fixes
+
+* cmake path issue ([f9bd71a](https://github.com/ChrisEberleSchool/Wiff/commit/f9bd71ae7dae2ce06a881386ccb3aec2fc549ec8))
+
+## [1.1.4](https://github.com/ChrisEberleSchool/Wiff/compare/v1.1.3...v1.1.4) (2026-01-14)
+
+
+### Bug Fixes
+
+* versioning cmake issue ([85a34b5](https://github.com/ChrisEberleSchool/Wiff/commit/85a34b546c41b762b8d95a47d13a1e6cfc73e7e0))
+
+## [1.1.3](https://github.com/ChrisEberleSchool/Wiff/compare/v1.1.2...v1.1.3) (2026-01-14)
+
+
+### Bug Fixes
+
+* ci and build retargeting ([eab2ff5](https://github.com/ChrisEberleSchool/Wiff/commit/eab2ff5814705e357fdccdb0014111864773270c))
+* docker dep issue fix ([cd8c32d](https://github.com/ChrisEberleSchool/Wiff/commit/cd8c32df0bb1e5b89eeee49ba585a276453d4cdd))
+* docker issue fix ([3a5263d](https://github.com/ChrisEberleSchool/Wiff/commit/3a5263d1267a0b20b4111c58abe0b96a29d04c41))
+* release tag issue ([3529cd7](https://github.com/ChrisEberleSchool/Wiff/commit/3529cd7cb49c7b26ee1051bce38db4e1525ddc21))
+
+## [1.1.2](https://github.com/ChrisEberleSchool/Wiff/compare/v1.1.1...v1.1.2) (2026-01-14)
+
+
+### Bug Fixes
+
+* attempt ci ([18251cf](https://github.com/ChrisEberleSchool/Wiff/commit/18251cf3f1831da094b4e11c5fd855a3fd2a560c))
+
+## [1.1.1](https://github.com/ChrisEberleSchool/Wiff/compare/v1.1.0...v1.1.1) (2026-01-14)
+
+
+### Bug Fixes
+
+* attempt ci ([7cb8310](https://github.com/ChrisEberleSchool/Wiff/commit/7cb83106f5514b75a69f9fc995b9443ecc1f848c))
+
 # [1.1.0](https://github.com/ChrisEberleSchool/Wiff/compare/v1.0.0...v1.1.0) (2026-01-14)
 
 

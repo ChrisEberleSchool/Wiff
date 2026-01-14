@@ -1,9 +1,6 @@
 #build folder
 /build
 
-# Built binaries
-/wiff/usr/bin/wiff
-
 # Debian packages
 *.deb
 

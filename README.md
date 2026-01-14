@@ -54,18 +54,18 @@
 ### User Installation (Prebuilt Packages)
 
 <details>
-  <summary>Linux (64-bit `amd64`)</summary>
+  <summary>Linux (64-bit `amd64`) or ARM64</summary>
 
-1. Download the `.deb` release:
+1. Download the `.deb` release for your architecture. Replace `x86_64` with `aarch64` for ARM:
 
 ```bash
-wget -P ~/Downloads https://github.com/ChrisEberleSchool/Wiff/releases/download/v1.0.0/wiff.deb
+wget -P ~/Downloads https://github.com/ChrisEberleSchool/Wiff/releases/download/v1.2.0/wiff-v1.2.0-Linux-x86_64.deb
 ```
 
 2. Install it:
 
 ```bash
-sudo apt install ~/Downloads/wiff.deb
+sudo apt install ~/Downloads/wiff-v1.2.0-Linux-x86_64.deb
 ```
 
 3. Test a basic command:
@@ -86,6 +86,7 @@ sudo apt purge wiff
   <summary>macOS</summary>
 
 - **N/A** (No prebuilt package available yet)
+- You can build from source using the instructions below.
 
 </details>
 
@@ -93,6 +94,7 @@ sudo apt purge wiff
   <summary>Windows</summary>
 
 - **N/A** (No prebuilt package available yet)
+- Build from source using Visual Studio + CMake.
 
 </details>
 
@@ -109,27 +111,34 @@ This works on **Linux, macOS, and Windows**
 
 ```bash
 git clone https://github.com/ChrisEberleSchool/Wiff.git
+cd Wiff
 ```
 
-2. (Linux only) Modify `wiff/DEBIAN/control` to match your CPU architecture:
+2. (Optional) On Linux, check your architecture matches CPack build:
 
-```text
-Architecture: amd64
+```bash
+uname -m   # x86_64 or aarch64
 ```
 
-3. Build from the root directory:
+3. Run the build script:
 
 ```bash
 ./build.sh
 ```
 
+- On Linux, this will create a `.deb` in the `build/` folder.
+- On macOS, this will build the `wiff` binary only.
+
 4. Run the binary:
 
 ```bash
-./wiff/usr/bin/wiff
+./build/wiff
+# or if installed via .deb
+wiff grab -e txt --size ~/Documents
 ```
 
 </details>
+
 
 ## Wiff Guide
 

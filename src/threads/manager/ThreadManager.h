@@ -17,5 +17,5 @@ public:
     void stopThread(const std::string& threadName);
 
 private:
-    std::unordered_map<std::string, ThreadedObject> threads;
+    std::unordered_map<std::string, std::unique_ptr<ThreadedObject>> threads;
 };

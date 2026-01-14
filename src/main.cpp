@@ -20,6 +20,8 @@ int main(int argc, char* argv[]) {
         ThreadManager tm;
         tm.add("loadingUI", std::make_unique<LoadingThread>());
 
+        tm.startThread("loadingUI");
+
         // Arg Parser init
         ParsedArgs args(argc,argv);
 

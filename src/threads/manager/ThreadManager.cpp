@@ -1,8 +1,17 @@
 #include "./ThreadManager.h"
 
+ThreadManager::ThreadManager() = default;
+
+ThreadManager::~ThreadManager() {
+    for (auto& [name, thread] : threads) {
+        if (thread) {
+            thread->stop();
+        }
+    }
+}
 
 void ThreadManager::add(const std::string& threadName, std::unique_ptr<ThreadedObject> thread) {
-    threads.insert(threadName, std::move(thread));
+    threads.emplace(threadName, std::move(thread));
 }
 
 void ThreadManager::startThread(const std::string& threadName) {

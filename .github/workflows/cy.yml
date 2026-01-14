@@ -1,0 +1,58 @@
+name: Build & Release wiff
+
+on:
+  push:
+    branches: [dev, main]
+    tags:
+      - 'v*'
+
+jobs:
+  build-deb:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [x86_64, arm64]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake dpkg-dev qemu-user-static
+
+      - name: Display architecture
+        run: uname -m
+
+      - name: Build wiff binary and .deb
+        run: |
+          chmod +x ./build.sh
+          ./build.sh
+
+      - name: Rename .deb artifact with architecture
+        run: |
+          DEB_FILE=$(ls build/*.deb)
+          mv "$DEB_FILE" "wiff-${GITHUB_REF_NAME}-Linux-${{ matrix.arch }}.deb"
+
+      - name: Upload .deb artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wiff-${{ matrix.arch }}-deb
+          path: wiff-${GITHUB_REF_NAME}-Linux-${{ matrix.arch }}.deb
+
+  release:
+    needs: build-deb
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-debs
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          files: release-debs/*.deb

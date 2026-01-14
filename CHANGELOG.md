@@ -1,3 +1,14 @@
+# [1.1.0](https://github.com/ChrisEberleSchool/Wiff/compare/v1.0.0...v1.1.0) (2026-01-14)
+
+
+### Features
+
+* added simple loading class with loading functionality ([6d995e1](https://github.com/ChrisEberleSchool/Wiff/commit/6d995e16ad0eed72be3f979fd0510b0d6ba467c1))
+* added simple non-synced loader anim ([32af039](https://github.com/ChrisEberleSchool/Wiff/commit/32af0392758fc7f0d5cbf14fef79d56a1a06dac1))
+* fixed proper loading thread stop by adding app context class ([263ae2c](https://github.com/ChrisEberleSchool/Wiff/commit/263ae2c0101da4eb1737352a622a3875db8727b1))
+* implemented thread manager and included files ([5ad3adb](https://github.com/ChrisEberleSchool/Wiff/commit/5ad3adb57618195181d44939aa0e10e5dafbff69))
+* ThreadManager class working ([06d1322](https://github.com/ChrisEberleSchool/Wiff/commit/06d13221a1e0a3a901a0fb6f08d54ac29d665edc))
+
 # 1.0.0 (2026-01-13)
 
 

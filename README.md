@@ -1,84 +1,245 @@
 # Wiff
-- Command line utility helper written in c++
+
+**Wiff** is a fast, versatile command-line utility suite written in C++ that goes beyond standard CLI tools. It starts with powerful bulk file search capabilities and aims to grow into a full toolkit of commands that provide functionality typical command-line utilities don’t offer — like advanced file discovery, disk usage insights, identifying oversized or redundant files, and other productivity-boosting operations — all designed to save time and streamline file management.
+
+[![Release](https://img.shields.io/github/v/release/ChrisEberleSchool/Wiff?color=blue&label=latest)](https://github.com/ChrisEberleSchool/Wiff/releases)
+[![License](https://img.shields.io/github/license/ChrisEberleSchool/Wiff)](LICENSE)
+
+---
+
+## Table of Contents
+
+- [Requirements](#requirements)
+- [Downloading & Installing](#downloading--installing)
+  - [User Installation (.deb)](#user-installation-prebuilt-packages)
+  - [Building from Source](#building-from-source)
+- [Usage Guide](#wiff-guide)
+- [Contributing](#contributing)
+- [AI Disclaimer](#ai-disclaimer)
+- [License](#license)
+
+---
 
 ## Requirements
 
 ### For Users
-- **Operating System:** Ubuntu/Debian
-- **Privileges:** `sudo` access to install `.deb` packages  
+
+- **Operating System:** Linux, macOS
+- **Privileges:** `sudo` access for installing `.deb` packages (Linux)
 
 ### For Developers / Building from Source
-- **g++ compiler** (supports C++23)  
-- **dpkg-deb** (for building `.deb` packages)  
+
+#### Linux
+
+- **g++ compiler** (supports C++23)
+- **dpkg-deb** (for building `.deb` packages)
+- **CMake** (for building from source)
+
+#### macOS
+
+- **Apple clang++** (version 15+ for C++20/23 features, including `std::jthread`)
+- **CMake** (for building from source)
+- **Homebrew** (optional, for installing dependencies)
+
+#### Windows
+
+- **MSVC / Visual Studio 2022+** (with C++20/23 support)
+- **CMake** (for cross-platform builds)
+- **Git** (for cloning repository)
 
 ---
 
+## Downloading & Installing Wiff
 
-# Downloading & Installing Wiff (USER)(64-bit, `amd64`)  
-1. Go to terminal, and wget the .deb file
-    ```
-    wget -P ~/Downloads https://github.com/ChrisEberleSchool/Wiff/releases/download/v1.0.0/wiff.deb
-    ```
-2. Install it
-    ```
-    sudo apt install ~/Downloads/wiff.deb
-    ```
-3. Test a basic grab command
-    ```
-    wiff grab -e txt --size ~/Documents
-    ```
-### **Uninstalling Wiff**
-    sudo apt purge wiff
+### User Installation (Prebuilt Packages)
 
-# Downloading & Installing Wiff (From source)  
-1. Clone the repo
-    ```
-    git clone https://github.com/ChrisEberleSchool/Wiff.git
-    ```
-2. modify wiff/DEBIAN/control to use your CPU architecture
-    ```
-    Architecture: amd64
-    ```
-3. From root build
-    ```
-    ./build.sh
-    ```
-4. Run binary
-    ```
-    ./wiff/usr/bin/wiff
-    ```
+<details>
+  <summary>Linux (64-bit `amd64`)</summary>
 
-# Contributing guide
+1. Download the `.deb` release:
 
-## Commit messages
+```bash
+wget -P ~/Downloads https://github.com/ChrisEberleSchool/Wiff/releases/download/v1.0.0/wiff.deb
 ```
-feat:	A new feature	Minor version bump
-fix:	A bug fix	Patch version bump
-chore:	Maintenance, refactoring, merges, build scripts, etc.	No version bump
-docs:	Documentation only	No version bump
-``` 
-# Wiff Guide
 
-    grab 
-        Searches for files in bulk by name or extension. Defaults by full filename if no flag is provided.
-              Usage:   wiff grab [search-flag] [target] [sort-flag] [directory] 
+2. Install it:
 
-    help    
-        Shows help information for commands
-              Usage:    wiff help [command]
+```bash
+sudo apt install ~/Downloads/wiff.deb
+```
 
+3. Test a basic command:
 
-    SEARCH FLAGS: Defaulted to filename
-        -e <extension>   # Find files by extension
-        -n <file-body>    # Find files by just the body name not extension
+```bash
+wiff grab -e txt --size ~/Documents
+```
 
-    SORT FLAGS:
-        --size           # Sort results by file size descending
-        --date           # Sort results by date descending (newest first)
-        --alpha          # Sort results alphabetically (default)
+**Uninstalling Wiff**
 
-    EXAMPLE (Find all files with extension txt in the current directory and sort by size):
-        > wiff grab -e txt --size
-    
-    EXAMPLE (Find all files with name README in the Documents directory and sort by date):
-        > wiff grab -n README --size ~/Documents
+```bash
+sudo apt purge wiff
+```
+
+</details>
+
+<details>
+  <summary>macOS</summary>
+
+- **N/A** (No prebuilt package available yet)
+
+</details>
+
+<details>
+  <summary>Windows</summary>
+
+- **N/A** (No prebuilt package available yet)
+
+</details>
+
+---
+
+### Building from Source
+
+This works on **Linux, macOS, and Windows**
+
+<details>
+  <summary>Build Instructions</summary>
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/ChrisEberleSchool/Wiff.git
+```
+
+2. (Linux only) Modify `wiff/DEBIAN/control` to match your CPU architecture:
+
+```text
+Architecture: amd64
+```
+
+3. Build from the root directory:
+
+```bash
+./build.sh
+```
+
+4. Run the binary:
+
+```bash
+./wiff/usr/bin/wiff
+```
+
+</details>
+
+## Wiff Guide
+
+### Commands
+
+**grab**  
+Searches for files in bulk by name or extension. Defaults to filename search if no flag is provided.
+
+**Usage:**
+
+```bash
+wiff grab [search-flag] [target] [sort-flag] [directory]
+```
+
+**help**  
+Shows help information for commands:
+
+```bash
+wiff help [command]
+```
+
+---
+
+### Search Flags
+
+| Flag             | Description                                 |
+| ---------------- | ------------------------------------------- |
+| `-e <extension>` | Find files by extension                     |
+| `-n <file-body>` | Find files by name body (without extension) |
+
+### Sort Flags
+
+| Flag      | Description                                    |
+| --------- | ---------------------------------------------- |
+| `--size`  | Sort results by file size descending           |
+| `--date`  | Sort results by date descending (newest first) |
+| `--alpha` | Sort results alphabetically (default)          |
+
+### Examples
+
+- Find all `.txt` files in the current directory and sort by size:
+
+```bash
+wiff grab -e txt --size
+```
+
+- Find all files named `README` in the `Documents` directory and sort by date:
+
+```bash
+wiff grab -n README --date ~/Documents
+```
+
+---
+
+## Contributing
+
+We welcome contributions! To keep the project organized and maintain semantic versioning, please follow these guidelines:
+
+### Branching
+
+- Branch **off `dev`**, never `main`.
+- Use descriptive branch names:
+
+| Type                | Example                    |
+| ------------------- | -------------------------- |
+| Feature             | `feat/add-login-command`   |
+| Bugfix              | `fix/handle-empty-results` |
+| Chore / Maintenance | `chore/update-ci-pipeline` |
+
+**Example workflow:**
+
+```bash
+git checkout dev
+git pull origin dev
+git checkout -b feat/add-login-command
+```
+
+### Commit Messages
+
+We follow **Semantic Release conventions**:
+
+```
+<type>(<scope>): <short description>
+```
+
+| Type       | Description                       |
+| ---------- | --------------------------------- |
+| `feat`     | New feature                       |
+| `fix`      | Bug fix                           |
+| `chore`    | Maintenance / build / CI          |
+| `docs`     | Documentation only                |
+| `refactor` | Code change, no new feature / fix |
+| `test`     | Adding/updating tests             |
+
+**Examples:**
+
+```bash
+git commit -m "feat(parser): add support for regex search"
+git commit -m "fix(grab): handle empty search results"
+git commit -m "chore(ci): update pipeline configuration"
+```
+
+### Pull Requests
+
+- Always target the **`dev` branch**.
+- Include tests for new features or fixes if possible.
+- Provide a clear description and reference relevant issues.
+
+---
+
+## AI Disclaimer
+
+> ⚠️ **AI Disclaimer:** AI was used solely to assist in generating this README and other project documentation. All code, commands, and project logic were created and reviewed by the project maintainers.

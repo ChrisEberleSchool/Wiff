@@ -15,7 +15,7 @@ echo "Detected OS: $BUILD_OS"
 
 # Strip leading 'v' if present
 CMAKE_VERSION="${WIFF_VERSION#v}"
-CMAKE_VERSION="${CMAKE_VERSION:-1.0.0}"  # fallback if empty
+CMAKE_VERSION="${CMAKE_VERSION:-1.0.0}" 
 
 echo "Using CMake project version: $CMAKE_VERSION"
 

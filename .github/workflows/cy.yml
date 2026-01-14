@@ -1,13 +1,16 @@
-name: Build & Release wiff
+name: Build & Release Wiff
 
 on:
   push:
-    branches: [dev, main]
+    branches: [34-chore-build-script-target-all-platforms, dev, main]   # CI testing on branches
     tags:
-      - 'v*'
+      - 'v*'                # Release only on tags
 
 jobs:
-  build-deb:
+  # -------------------------------
+  # CI / Build job (branch or tag)
+  # -------------------------------
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -25,15 +28,19 @@ jobs:
       - name: Display architecture
         run: uname -m
 
-      - name: Build wiff binary and .deb
+      - name: Build project and .deb
         run: |
           chmod +x ./build.sh
           ./build.sh
 
       - name: Rename .deb artifact with architecture
+        if: startsWith(github.ref, 'refs/tags/') || github.ref_name == 'dev' || github.ref_name == 'main'
         run: |
+          # pick the .deb produced in build/
           DEB_FILE=$(ls build/*.deb)
-          mv "$DEB_FILE" "wiff-${GITHUB_REF_NAME}-Linux-${{ matrix.arch }}.deb"
+          NEW_NAME="wiff-${GITHUB_REF_NAME}-Linux-${{ matrix.arch }}.deb"
+          mv "$DEB_FILE" "$NEW_NAME"
+          echo "Built artifact: $NEW_NAME"
 
       - name: Upload .deb artifact
         uses: actions/upload-artifact@v4
@@ -41,11 +48,15 @@ jobs:
           name: wiff-${{ matrix.arch }}-deb
           path: wiff-${GITHUB_REF_NAME}-Linux-${{ matrix.arch }}.deb
 
+  # -------------------------------
+  # Release job (tags only)
+  # -------------------------------
   release:
-    needs: build-deb
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
-      - name: Download artifacts
+      - name: Download artifacts from build job
         uses: actions/download-artifact@v4
         with:
           path: release-debs

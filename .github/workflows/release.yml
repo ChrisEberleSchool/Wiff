@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 'lts/*'
 
-      - name: Install system deps
+      - name: Install deps
         run: sudo apt-get update && sudo apt-get install -y cmake dpkg-dev
 
       - name: Install npm deps
@@ -35,15 +35,15 @@ jobs:
           VERSION=$(grep -oP 'next release version is \K[0-9.]+' release.log || true)
 
           if [ -z "$VERSION" ]; then
-            echo "release=false" >> $GITHUB_OUTPUT
+            echo "No release needed"
             exit 0
           fi
 
-          echo "release=true" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Build x86_64
-        if: steps.version.outputs.release == 'true'
+        env:
+          WIFF_VERSION: ${{ steps.version.outputs.version }}
         run: |
           chmod +x build.sh
           ./build.sh
@@ -51,11 +51,11 @@ jobs:
           mv build/*.deb dist/wiff-${{ steps.version.outputs.version }}-Linux-x86_64.deb
 
       - name: Set up QEMU
-        if: steps.version.outputs.release == 'true'
         uses: docker/setup-qemu-action@v3
 
-      - name: Build arm64 (Docker)
-        if: steps.version.outputs.release == 'true'
+      - name: Build arm64
+        env:
+          WIFF_VERSION: ${{ steps.version.outputs.version }}
         run: |
           docker run --rm --platform linux/arm64 \
             -v "$PWD:/src" \
@@ -64,13 +64,11 @@ jobs:
               apt update &&
               apt install -y build-essential cmake dpkg-dev git &&
               cd /src &&
-              chmod +x build.sh &&
               ./build.sh &&
               mv build/*.deb dist/wiff-${{ steps.version.outputs.version }}-Linux-arm64.deb
             "
 
       - name: Run semantic-release
-        if: steps.version.outputs.release == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release

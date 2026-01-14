@@ -5,7 +5,7 @@ rm -rf build
 mkdir build
 cd build
 
-cmake ..
+cmake .. -DPROJECT_VERSION="$WIFF_VERSION"
 cmake --build . -- -j$(nproc)
 
 cpack -G DEB

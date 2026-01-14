@@ -21,7 +21,8 @@ jobs:
           node-version: 'lts/*'
 
       - name: Install deps
-        run: sudo apt-get update && sudo apt-get install -y cmake dpkg-dev docker.io
+        run: sudo apt-get update && sudo apt-get install -y cmake dpkg-dev
+
 
       - name: Install npm deps
         run: npm ci

@@ -7,8 +7,9 @@
 #include <unordered_map>
 #include <stdexcept>
 
-#include "command/base/Command.h"
+#include "command/base/ICommand.h"
 #include "argument/ParsedArgs.h"
+#include "context/ApplicationContext.h"
 
 
 /**
@@ -20,12 +21,12 @@ public:
     CommandManager();
     ~CommandManager () = default;
 
-    void add(std::unique_ptr<Command> cmd);
+    void add(std::unique_ptr<ICommand> cmd);
 
-    void execute(const ParsedArgs& args);
+    void execute(ApplicationContext& ctx);
 
-    const std::unordered_map<std::string, std::unique_ptr<Command>>& commands() const;
+    const std::unordered_map<std::string, std::unique_ptr<ICommand>>& commands() const;
     
 private:
-    std::unordered_map<std::string, std::unique_ptr<Command>> commandMap;
+    std::unordered_map<std::string, std::unique_ptr<ICommand>> commandMap;
 };

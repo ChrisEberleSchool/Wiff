@@ -5,7 +5,7 @@
 #include <thread>
 #include <chrono>
 
-#include "command/base/Command.h"
+#include "command/base/ICommand.h"
 #include "command/manager/CommandManager.h"
 
 #include "command/grab/GrabCommand.h"
@@ -13,29 +13,30 @@
 #include "argument/ParsedArgs.h"
 #include "threads/manager/ThreadManager.h"
 #include "threads/loading/LoadingThread.h"
+#include "context/ApplicationContext.h"
 
-int main(int argc, char* argv[]) {
-    try {
-        // Threads init
-        ThreadManager tm;
-        tm.add("loadingUI", std::make_unique<LoadingThread>());
+int main(int argc, char *argv[])
+{
+    try
+    {
+        ApplicationContext appCtx(argc, argv);
+        appCtx.threadManager.add("loadingUI", std::make_unique<LoadingThread>());
 
-        tm.startThread("loadingUI");
+        appCtx.threadManager.startThread("loadingUI");
 
-        // Arg Parser init
-        ParsedArgs args(argc,argv);
-
-        //create the managers and arguments class
+        // create the managers and arguments class
         CommandManager cmdManager;
 
         // populate the command manager
         cmdManager.add(std::make_unique<GrabCommand>());
         cmdManager.add(std::make_unique<HelpCommand>(cmdManager.commands()));
-        cmdManager.execute(args);
-    } catch (const std::exception& e) {
+        cmdManager.execute(appCtx);
+    }
+    catch (const std::exception &e)
+    {
         std::cerr << e.what() << "\n";
         return 1;
     }
-	
+
     return 0;
 }

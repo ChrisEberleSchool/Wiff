@@ -4,19 +4,18 @@
 #include <string>
 #include <vector>
 
-#include "../../argument/ParsedArgs.h"
-
+#include "context/ApplicationContext.h"
 /**
  * @brief Abstract class which defines a command
  */
-class Command {
+class ICommand {
 public:
-	virtual ~Command() = default;
+	virtual ~ICommand() = default;
 
 	virtual std::string name() const = 0; 
 
 	virtual std::string description() const = 0;
     virtual std::string usage() const = 0;
 
-	virtual void execute(const ParsedArgs& args) = 0;
+	virtual void execute(ApplicationContext& ctx) = 0;
 };

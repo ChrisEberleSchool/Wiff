@@ -10,8 +10,9 @@
 #include <chrono>
 #include <sstream>
 
-#include "command/base/Command.h"
+#include "command/base/ICommand.h"
 #include "argument/ParsedArgs.h"
+#include "context/ApplicationContext.h"
 
 namespace fs = std::filesystem;
 
@@ -30,23 +31,23 @@ struct FileEntry {
 /**
  * @brief Finder tool.
  */
-class GrabCommand : public Command {
+class GrabCommand : public ICommand {
 public:
     std::vector<FileEntry> foundFiles;
 
     GrabCommand();
 
-    void execute(const ParsedArgs& args) override;
+    void execute(ApplicationContext& ctx) override;
 
     std::string description() const override;
     std::string usage() const override;
     std::string name() const override;
 private:
-    void handleExtension(const ParsedArgs& args);
-    void handleFileName(const ParsedArgs& args);
-    void handleStump(const ParsedArgs& args);
+    void handleExtension(ApplicationContext& ctx);
+    void handleFileName(ApplicationContext& ctx);
+    void handleStump(ApplicationContext& ctx);
 
-    void sortFoundFiles(const ParsedArgs& args);
+    void sortFoundFiles(ApplicationContext& ctx);
     /**
      * @brief creates the string representing the files size
      */

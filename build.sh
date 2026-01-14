@@ -13,14 +13,19 @@ fi
 
 echo "Detected OS: $BUILD_OS"
 
+# Strip leading 'v' if present
+CMAKE_VERSION="${WIFF_VERSION#v}"
+CMAKE_VERSION="${CMAKE_VERSION:-1.0.0}"  # fallback if empty
+
+echo "Using CMake project version: $CMAKE_VERSION"
+
 # Build directory
 rm -rf build
 mkdir build
 cd build
 
 # Build the project
-cmake .. -DPROJECT_VERSION="${WIFF_VERSION:-v1.0.0}"
-# Use nproc on Linux, fallback to 2 cores otherwise
+cmake .. -DPROJECT_VERSION="$CMAKE_VERSION"
 cmake --build . -- -j$(nproc 2>/dev/null || echo 2)
 
 # Package only if Linux

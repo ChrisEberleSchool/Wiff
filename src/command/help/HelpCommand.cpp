@@ -2,18 +2,18 @@
 
 
 
-HelpCommand::HelpCommand( const std::unordered_map<std::string, std::unique_ptr<Command>>& commands) : commands(commands) {}
+HelpCommand::HelpCommand( const std::unordered_map<std::string, std::unique_ptr<ICommand>>& commands) : commands(commands) {}
 
 std::string HelpCommand::name() const {
     return "help";
 }
 
-void HelpCommand::execute(const ParsedArgs& args) {
-    if (args.target.empty()) {
+void HelpCommand::execute(ApplicationContext& ctx) {
+    if (ctx.parsedArgs.target.empty()) {
         //iterate over commands in the mao
         printOverview();
     } else { // print the usage and desciption for the specified target
-        printCommand(args.target);
+        printCommand(ctx.parsedArgs.target);
     }
 }
 
@@ -45,21 +45,21 @@ void HelpCommand::printCommand(const std::string& name) const {
     if (it == commands.end()) {
         throw std::runtime_error("Unknown command: " + name);
     }
-    const Command& cmd = *it->second;
+    const ICommand& cmd = *it->second;
     std::cout << "Usage:\n"
               << "  " << cmd.usage() << "\n\n"
               << "Description:\n"
               << "  " << cmd.description() << "\n";
 }
 
-std::vector<const Command*> HelpCommand::sortedCommands() const {
-    std::vector<const Command*> result;
+std::vector<const ICommand*> HelpCommand::sortedCommands() const {
+    std::vector<const ICommand*> result;
     result.reserve(commands.size());
     for (const auto& [_, cmd] : commands) {
         result.push_back(cmd.get());
     }
     std::sort(result.begin(), result.end(),
-              [](const Command* a, const Command* b) {
+              [](const ICommand* a, const ICommand* b) {
                   return a->name() < b->name();
               });
     return result;

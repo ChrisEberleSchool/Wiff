@@ -3,17 +3,17 @@
 
 GrabCommand::GrabCommand() = default;
 std::string GrabCommand::name() const { return "grab"; }
-void GrabCommand::execute(const ParsedArgs& args) {
+void GrabCommand::execute(ApplicationContext& ctx) {
     // switch handling depending on type
-    switch(args.searchFlag) {
+    switch(ctx.parsedArgs.searchFlag) {
         case SearchBy::Extension:
-            this->handleExtension(args);
+            this->handleExtension(ctx);
             break;
         case SearchBy::FileName:
-            this->handleFileName(args);
+            this->handleFileName(ctx);
             break;
         case SearchBy::Stump:
-            this->handleStump(args);
+            this->handleStump(ctx);
             break;
         default:
             throw std::logic_error("Unknown TypeFlag");
@@ -28,33 +28,34 @@ std::string GrabCommand::usage() const {
     return "wiff grab [search-flag] [target] [sort-flag] [directory]";
 }
 
-void GrabCommand::handleExtension(const ParsedArgs& args) {
-    if(args.target.empty())
+void GrabCommand::handleExtension(ApplicationContext& ctx) {
+    if(ctx.parsedArgs.target.empty())
         throw std::runtime_error("No extension provided for search.");
 
-    for (const auto& dir_entry : fs::recursive_directory_iterator{args.dirPath, fs::directory_options::skip_permission_denied}) {
+    for (const auto& dir_entry : fs::recursive_directory_iterator{ctx.parsedArgs.dirPath, fs::directory_options::skip_permission_denied}) {
         if (!fs::is_regular_file(dir_entry.status()))
             continue;
 
         std::string ext = dir_entry.path().extension().string();
         if (!ext.empty() && ext[0] == '.') ext = ext.substr(1);
 
-        if(ext != args.target) continue;
+        if(ext !=ctx.parsedArgs.target) continue;
 
         foundFiles.push_back(FileEntry(dir_entry));
     }
 
-    sortFoundFiles(args);
+    sortFoundFiles(ctx);
+    ctx.threadManager.stopThread("loadingUI");
     benchmarkPrintMethod();
 }
 
 
-void GrabCommand::handleFileName(const ParsedArgs& args) {
+void GrabCommand::handleFileName(ApplicationContext& ctx) {
     // recursive loop starting from provided directory
     for (
         const auto& dir_entry :    
         fs::recursive_directory_iterator {
-            args.dirPath, 
+            ctx.parsedArgs.dirPath, 
             fs::directory_options::skip_permission_denied
         }
     ) {
@@ -63,31 +64,35 @@ void GrabCommand::handleFileName(const ParsedArgs& args) {
             continue;
         
         // non matching file extensions skip
-        if(dir_entry.path().filename().string() != args.target) continue;
+        if(dir_entry.path().filename().string() !=ctx.parsedArgs.target) continue;
         
         // add file to vector
         foundFiles.push_back(FileEntry(dir_entry));
     }
     
-    sortFoundFiles(args);
+
+    sortFoundFiles(ctx);
+    ctx.threadManager.stopThread("loadingUI");
     benchmarkPrintMethod();
 }
 
-void GrabCommand::handleStump(const ParsedArgs& args) {
+void GrabCommand::handleStump(ApplicationContext& ctx) {
     // recursive loop starting from provided directory
-    for (const auto& dir_entry : fs::recursive_directory_iterator{args.dirPath, fs::directory_options::skip_permission_denied}) {
+    for (const auto& dir_entry : fs::recursive_directory_iterator{ctx.parsedArgs.dirPath, fs::directory_options::skip_permission_denied}) {
         // skip non-files
         if (!fs::is_regular_file(dir_entry.status()))
             continue;
         
         // non matching file extensions skip
-        if(dir_entry.path().stem().string() != args.target) continue;
+        if(dir_entry.path().stem().string() !=ctx.parsedArgs.target) continue;
         
         // add file to vector
         foundFiles.push_back(FileEntry(dir_entry));
     }
+
     
-    sortFoundFiles(args);
+    sortFoundFiles(ctx);
+    ctx.threadManager.stopThread("loadingUI");
     benchmarkPrintMethod();
 }
 
@@ -105,8 +110,8 @@ std::string GrabCommand::printFoundFiles() {
     return out.str();
 }
 
-void GrabCommand::sortFoundFiles(const ParsedArgs& args) {
-    switch(args.sortFlag) {
+void GrabCommand::sortFoundFiles(ApplicationContext& ctx) {
+    switch(ctx.parsedArgs.sortFlag) {
         case SortBy::Alpha:
             std::sort(foundFiles.begin(), foundFiles.end(),
                       [](const FileEntry& a, const FileEntry& b) { return a.filename < b.filename; });

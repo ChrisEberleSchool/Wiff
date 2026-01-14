@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/ChrisEberleSchool/Wiff/compare/v1.1.0...v1.1.1) (2026-01-14)
+
+
+### Bug Fixes
+
+* deb version naming wrong ([45f9f05](https://github.com/ChrisEberleSchool/Wiff/commit/45f9f05f0358b875fe1be64c2fb234e551362e57))
+
 ## [1.1.5](https://github.com/ChrisEberleSchool/Wiff/compare/v1.1.4...v1.1.5) (2026-01-14)
 
 

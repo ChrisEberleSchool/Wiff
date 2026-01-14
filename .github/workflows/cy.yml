@@ -2,14 +2,10 @@ name: Build & Release Wiff
 
 on:
   push:
-    branches: [34-chore-build-script-target-all-platforms, dev, main]   # CI testing on branches
     tags:
-      - 'v*'                # Release only on tags
+      - 'v*'
 
 jobs:
-  # -------------------------------
-  # CI / Build job (branch or tag)
-  # -------------------------------
   build:
     runs-on: ubuntu-latest
     strategy:
@@ -17,62 +13,59 @@ jobs:
         arch: [x86_64, arm64]
 
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential cmake dpkg-dev qemu-user-static
+      - name: Install host deps
+        run: sudo apt-get update && sudo apt-get install -y cmake dpkg-dev
 
-      - name: Display architecture
-        run: uname -m
-
-      - name: Build project and .deb
+      # -------------------------
+      # x86_64 native build
+      # -------------------------
+      - name: Build x86_64 deb
+        if: matrix.arch == 'x86_64'
         run: |
-          chmod +x ./build.sh
+          chmod +x build.sh
           ./build.sh
+          mv build/*.deb wiff-${GITHUB_REF_NAME}-Linux-x86_64.deb
 
-      - name: Rename .deb artifact with architecture
-        if: startsWith(github.ref, 'refs/tags/') || github.ref_name == 'dev' || github.ref_name == 'main'
+      # -------------------------
+      # arm64 Docker build
+      # -------------------------
+      - name: Build arm64 deb via Docker
+        if: matrix.arch == 'arm64'
         run: |
-          # pick the .deb produced in build/
-          DEB_FILE=$(ls build/*.deb)
-          NEW_NAME="wiff-${GITHUB_REF_NAME}-Linux-${{ matrix.arch }}.deb"
-          mv "$DEB_FILE" "$NEW_NAME"
-          echo "Built artifact: $NEW_NAME"
+          docker run --rm \
+            -v "$PWD:/src" \
+            arm64v8/ubuntu:22.04 \
+            bash -c "
+              apt update &&
+              apt install -y build-essential cmake dpkg-dev git &&
+              cd /src &&
+              chmod +x build.sh &&
+              ./build.sh &&
+              mv build/*.deb wiff-${GITHUB_REF_NAME}-Linux-arm64.deb
+            "
 
-      - name: Upload .deb artifact
+      - name: Upload deb
         uses: actions/upload-artifact@v4
         with:
           name: wiff-${{ matrix.arch }}-deb
           path: wiff-${GITHUB_REF_NAME}-Linux-${{ matrix.arch }}.deb
 
-  # -------------------------------
-  # Release job (tags only)
-  # -------------------------------
   release:
     needs: build
-    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
+
     steps:
-      - name: Download artifacts from build job
+      - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           path: release-debs
 
       - name: Create GitHub Release
-        id: create_release
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
-          generateReleaseNotes: false
-
-      - name: Upload .deb assets to release
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: release-debs/*.deb
-          asset_name: ${{ github.ref_name }}-Linux-${{ matrix.arch }}.deb
-          asset_content_type: application/vnd.debian.binary-package
+          artifacts: release-debs/**/*.deb

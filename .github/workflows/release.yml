@@ -2,8 +2,7 @@ name: Release
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 permissions:
   contents: write
@@ -11,6 +10,7 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -20,7 +20,40 @@ jobs:
         with:
           node-version: 'lts/*'
 
-      - run: npm ci
-      - run: npx semantic-release
+      - name: Install deps
+        run: sudo apt-get update && sudo apt-get install -y cmake dpkg-dev docker.io
+
+      - name: Install npm deps
+        run: npm ci
+
+      - name: Get next version
+        id: version
+        run: |
+          npx semantic-release --dry-run > release.log
+          VERSION=$(grep -oP 'next release version is \K[0-9.]+' release.log)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build x86_64
+        run: |
+          chmod +x build.sh
+          ./build.sh
+          mkdir -p dist
+          mv build/*.deb dist/wiff-${{ steps.version.outputs.version }}-Linux-x86_64.deb
+
+      - name: Build arm64 (Docker)
+        run: |
+          docker run --rm \
+            -v "$PWD:/src" \
+            arm64v8/ubuntu:22.04 \
+            bash -c "
+              apt update &&
+              apt install -y build-essential cmake dpkg-dev git &&
+              cd /src &&
+              ./build.sh &&
+              mv build/*.deb dist/wiff-${{ steps.version.outputs.version }}-Linux-arm64.deb
+            "
+
+      - name: Run semantic-release
+        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

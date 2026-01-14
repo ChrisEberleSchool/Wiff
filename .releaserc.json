@@ -16,7 +16,9 @@
       {
         "assets": [
           { "path": "dist/wiff-*-Linux-x86_64.deb" },
-          { "path": "dist/wiff-*-Linux-arm64.deb" }
+          { "path": "dist/wiff-*-Linux-arm64.deb" },
+          { "path": "dist/wiff-*-macOS.tar.gz" },
+          { "path": "dist/wiff-*-Windows.exe" }
         ]
       }
     ]

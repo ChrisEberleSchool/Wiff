@@ -8,9 +8,9 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  # ---------------- Linux x86_64 ----------------
+  build-linux-x86_64:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -50,10 +50,19 @@ jobs:
           mkdir -p dist
           mv build/*.deb dist/wiff-${{ steps.version.outputs.version }}-Linux-x86_64.deb
 
+  # ---------------- Linux ARM64 ----------------
+  build-linux-arm64:
+    runs-on: ubuntu-latest
+    needs: build-linux-x86_64
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
-      - name: Build arm64
+      - name: Build ARM64
         env:
           WIFF_VERSION: ${{ steps.version.outputs.version }}
         run: |
@@ -64,9 +73,68 @@ jobs:
               apt update &&
               apt install -y build-essential cmake dpkg-dev git &&
               cd /src &&
+              chmod +x build.sh &&
               ./build.sh &&
+              mkdir -p dist &&
               mv build/*.deb dist/wiff-${{ steps.version.outputs.version }}-Linux-arm64.deb
             "
+
+  # ---------------- macOS ----------------
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build macOS
+        env:
+          WIFF_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          chmod +x build.sh
+          ./build.sh
+          mkdir -p dist
+          mv build/*.tar.gz dist/wiff-${{ steps.version.outputs.version }}-macOS.tar.gz
+
+  # ---------------- Windows ----------------
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install CMake
+        uses: lukka/get-cmake@v4
+
+      - name: Build Windows
+        env:
+          WIFF_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          cmake --build . --config Release
+          mkdir ../../dist
+          copy Release\wiff.exe ..\..\dist\wiff-${{ steps.version.outputs.version }}-Windows.exe
+
+  # ---------------- Semantic Release ----------------
+  semantic-release:
+    runs-on: ubuntu-latest
+    needs:
+      - build-linux-x86_64
+      - build-linux-arm64
+      - build-macos
+      - build-windows
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      - name: Install npm deps
+        run: npm ci
 
       - name: Run semantic-release
         env:

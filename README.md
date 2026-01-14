@@ -56,46 +56,62 @@
 <details>
   <summary>Linux (64-bit `amd64`) or ARM64</summary>
 
-1. Download the `.deb` release for your architecture from releases.
+1. Download the `.deb` release for your architecture from the latest GitHub release:  
+```
+- **x86_64:**  
+  https://github.com/ChrisEberleSchool/Wiff/releases/download/${VERSION}/wiff-${VERSION}-Linux-x86_64.deb
 
-
-2. Install it like this putting in the deb filename you downloaded:
-
-```bash
-sudo apt install ~/Downloads/<DOWNLOADED_DEB_FILE_GOES_HERE>
+- **ARM64:**  
+  https://github.com/ChrisEberleSchool/Wiff/releases/download/${VERSION}/wiff-${VERSION}-Linux-arm64.deb
 ```
 
+2. Install it like this (replace `<DOWNLOADED_DEB_FILE>` with the actual filename you downloaded):
+```
+sudo apt install ~/Downloads/<DOWNLOADED_DEB_FILE>
+```
 3. Test a basic command:
-
-```bash
+```
 wiff grab -e txt --size ~/Documents
 ```
-
 **Uninstalling Wiff**
 
-```bash
 sudo apt purge wiff
-```
 
 </details>
 
 <details>
   <summary>macOS</summary>
 
-- **N/A** (No prebuilt package available yet)
-- You can build from source using the instructions below.
-
+1. Download the prebuilt tarball for the latest release:  
+```
+https://github.com/ChrisEberleSchool/Wiff/releases/download/${VERSION}/wiff-${VERSION}-macOS.tar.gz
+```
+2. Extract and move `wiff` to your path:
+```
+tar -xzf wiff-${VERSION}-macOS.tar.gz
+sudo mv wiff /usr/local/bin/
+```
+3. Test the command:
+```
+wiff grab -e txt --size ~/Documents
+```
 </details>
 
 <details>
   <summary>Windows</summary>
 
-- **N/A** (No prebuilt package available yet)
-- Build from source using Visual Studio + CMake.
+1. Download the prebuilt `.exe` for the latest release
+```  
+https://github.com/ChrisEberleSchool/Wiff/releases/download/${VERSION}/wiff-${VERSION#v}-Windows.exe
+```
+2. Move it to a folder in your PATH, for example `C:\Program Files\Wiff\`.  
 
+3. Test in Command Prompt or PowerShell:
+```
+wiff.exe grab -e txt --size C:\Users\YourName\Documents
+```
 </details>
 
----
 
 ### Building from Source
 

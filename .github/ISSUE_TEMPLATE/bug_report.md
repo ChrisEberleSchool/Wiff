@@ -1,36 +1,32 @@
 ---
-name: New Issue
-about: Report a bug or suggest a feature
-title: ""
-labels: ""
-assignees: ""
----
-
-# New Issue
-
-Thanks for taking the time to report an issue or suggest a feature!  
-Please fill out the sections below so we can address it quickly.
+name: Bug Report
+about: Report a problem with the project
+title: "[BUG] "
+labels: bug
+assignees: ''
 
 ---
 
-### **Type of Issue**
-- [ ] Bug
-- [ ] Feature Request
-- [ ] Question / Help
+## Describe the bug
+A clear and concise description of what the bug is.
 
----
+## Steps to Reproduce
+Steps to reproduce the behavior:
+1. ...
+2. ...
+3. ...
 
-### **Title**
-A short descriptive title for your issue.
+## Expected Behavior
+What you expected to happen.
 
----
+## Screenshots / Logs
+If applicable, add screenshots or paste logs/errors.
 
-### **Description**
-Provide a clear and concise description of the issue or feature request.
+## Environment
+- OS: [e.g., Ubuntu 22.04, macOS 14]
+- Compiler: [e.g., g++ 13, clang 16]
+- Build type: [Release/Debug]
+- Version: [e.g., 1.1.0]
 
----
-
-### **Steps to Reproduce** (for bugs) (e.g.)
-1. Run the command:
-   ```bash
-   wiff <command> [flags]
+## Additional Context
+Any other context about the problem.

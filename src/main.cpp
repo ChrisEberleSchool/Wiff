@@ -11,13 +11,16 @@
 #include "command/grab/GrabCommand.h"
 #include "command/help/HelpCommand.h"
 #include "argument/ParsedArgs.h"
-#include "ui/loading/LoadingUI.h"
-
+#include "threads/manager/ThreadManager.h"
+#include "threads/loading/LoadingThread.h"
 
 int main(int argc, char* argv[]) {
     try {
-        // Loading anim thread
-        LoadingUI loadingThread;
+        // Threads init
+        ThreadManager tm;
+        tm.add("loadingUI", std::make_unique<LoadingThread>());
+
+        // Arg Parser init
         ParsedArgs args(argc,argv);
 
         //create the managers and arguments class

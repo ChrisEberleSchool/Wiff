@@ -19,7 +19,7 @@ target_include_directories(wiff PRIVATE
 target_compile_options(wiff PRIVATE -Wall -Wextra -Wpedantic)
 
 install(TARGETS wiff
-    RUNTIME DESTINATION usr/bin
+    RUNTIME DESTINATION /usr/bin
 )
 
 # ---- CPack ----

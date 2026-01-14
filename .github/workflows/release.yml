@@ -29,10 +29,19 @@ jobs:
 
       - name: Get next version
         id: version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npx semantic-release --dry-run > release.log
-          VERSION=$(grep -oP 'next release version is \K[0-9.]+' release.log)
+          VERSION=$(grep -oP 'next release version is \K[0-9.]+' release.log || true)
+      
+          if [ -z "$VERSION" ]; then
+            echo "No release needed"
+            exit 0
+          fi
+      
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+      
 
       - name: Build x86_64
         run: |

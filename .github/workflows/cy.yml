@@ -51,8 +51,9 @@ jobs:
           path: release-debs
 
       - name: Create GitHub Release
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@v2
         with:
           tag: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
           files: release-debs/*.deb
+          generateReleaseNotes: false

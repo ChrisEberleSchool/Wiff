@@ -2,7 +2,7 @@ name: Build & Release Wiff
 
 on:
   push:
-    branches: [dev, main]   # CI testing on branches
+    branches: [34-chore-build-script-target-all-platforms, dev, main]   # CI testing on branches
     tags:
       - 'v*'                # Release only on tags
 

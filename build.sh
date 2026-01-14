@@ -19,7 +19,8 @@ mkdir build
 cd build
 
 # Build the project
-cmake .. -DPROJECT_VERSION="${WIFF_VERSION:-v1.0.0}"
+cmake .. -DPROJECT_VERSION="${WIFF_VERSION:-1.0.0}"
+
 # Use nproc on Linux, fallback to 2 cores otherwise
 cmake --build . -- -j$(nproc 2>/dev/null || echo 2)
 

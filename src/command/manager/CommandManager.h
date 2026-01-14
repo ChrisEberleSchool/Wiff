@@ -1,15 +1,12 @@
 #pragma once
 
-#include <iostream>
 #include <memory>
-#include <vector>
 #include <string>
 #include <unordered_map>
-#include <stdexcept>
 
-#include "command/base/Command.h"
-#include "argument/ParsedArgs.h"
+#include "context/ApplicationContext.h"
 
+#include "command/base/ICommand.h"
 
 /**
  * @brief Class that manages a unordered hashmap of
@@ -17,15 +14,15 @@
  */
 class CommandManager {
 public:
-    CommandManager();
-    ~CommandManager () = default;
+  CommandManager();
+  ~CommandManager() = default;
 
-    void add(std::unique_ptr<Command> cmd);
+  void execute(ApplicationContext &ctx);
 
-    void execute(const ParsedArgs& args);
+  const std::unordered_map<std::string, std::unique_ptr<ICommand>> &
+  commands() const;
 
-    const std::unordered_map<std::string, std::unique_ptr<Command>>& commands() const;
-    
 private:
-    std::unordered_map<std::string, std::unique_ptr<Command>> commandMap;
+  std::unordered_map<std::string, std::unique_ptr<ICommand>> commandMap;
+  void add(std::unique_ptr<ICommand> cmd);
 };

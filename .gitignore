@@ -9,3 +9,6 @@
 
 #NPM
 /node_modules
+
+#MAC build
+.DS_Store

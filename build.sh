@@ -1,17 +1,25 @@
 #!/usr/bin/env bash
 set -e
 
-echo "[1/3] Cleaning old artifacts..."
+echo "[1/2] Cleaning old artifacts..."
 rm -rf build wiff/usr/bin/wiff wiff.deb
 
-echo "[2/3] Building binary with CMake..."
-mkdir build
+echo "[2/2] Building binary with CMake..."
+mkdir -p build
 cd build
 cmake ..
 cmake --build .
 cd ..
 
-echo "[3/3] Building .deb..."
-dpkg-deb --build ./wiff
+OS="$(uname -s)"
 
-echo "✔ Done: wiff.deb created"
+if [[ "$OS" == "Linux" ]]; then
+  echo "[3/3] Building .deb..."
+  dpkg-deb --build ./wiff
+  echo "✔ Done: wiff.deb created"
+elif [[ "$OS" == "Darwin" ]]; then
+  echo "✔ Done: wiff binary built (macOS, skipping .deb)"
+else
+  echo "⚠ Unsupported OS: $OS"
+  exit 1
+fi

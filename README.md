@@ -56,16 +56,13 @@
 <details>
   <summary>Linux (64-bit `amd64`) or ARM64</summary>
 
-1. Download the `.deb` release for your architecture. Replace `x86_64` with `aarch64` for ARM:
+1. Download the `.deb` release for your architecture from releases.
+
+
+2. Install it like this putting in the deb filename you downloaded:
 
 ```bash
-wget -P ~/Downloads https://github.com/ChrisEberleSchool/Wiff/releases/download/v1.2.0/wiff-v1.2.0-Linux-x86_64.deb
-```
-
-2. Install it:
-
-```bash
-sudo apt install ~/Downloads/wiff-v1.2.0-Linux-x86_64.deb
+sudo apt install ~/Downloads/<DOWNLOADED_DEB_FILE_GOES_HERE>
 ```
 
 3. Test a basic command:

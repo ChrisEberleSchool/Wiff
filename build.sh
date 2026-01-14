@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 set -e
 
 echo "[1/2] Cleaning old artifacts..."
@@ -10,13 +11,15 @@ cmake ..
 cmake --build .
 cd ..
 
-# Building depending on OS
-# TODO:: create exe for win and macOS
-if [[ "$PLATFORM" == "linux" ]]; then
-    echo "[3/3] Building .deb..."
-    dpkg-deb --build ./wiff
-    echo "✔ Done: wiff.deb created"
-else
-    echo "✔ Done: wiff binary built (macOS, skipping .deb)"
-fi
+OS="$(uname -s)"
 
+if [[ "$OS" == "Linux" ]]; then
+  echo "[3/3] Building .deb..."
+  dpkg-deb --build ./wiff
+  echo "✔ Done: wiff.deb created"
+elif [[ "$OS" == "Darwin" ]]; then
+  echo "✔ Done: wiff binary built (macOS, skipping .deb)"
+else
+  echo "⚠ Unsupported OS: $OS"
+  exit 1
+fi

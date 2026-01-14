@@ -3,11 +3,18 @@
 #include <argument/ParsedArgs.h>
 #include <threads/manager/ThreadManager.h>
 
-struct ApplicationContext
-{
-    ApplicationContext(int argc, char *argv[])
-        : parsedArgs(argc, argv) {}
+#include "threads/loading/LoadingThread.h"
 
-    ThreadManager threadManager;
-    ParsedArgs parsedArgs;
+/**
+ * @brief This class holds application context specific
+ *        objects that need to be accessed in multiple places.
+ *
+ * */
+struct ApplicationContext {
+  ApplicationContext(int argc, char *argv[]) : parsedArgs(argc, argv) {
+    this->threadManager.add("loadingUI", std::make_unique<LoadingThread>());
+  }
+
+  ThreadManager threadManager;
+  ParsedArgs parsedArgs;
 };

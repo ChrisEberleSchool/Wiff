@@ -188,24 +188,50 @@ wiff grab -n README --date ~/Documents
 
 We welcome contributions! To keep the project organized and maintain semantic versioning, please follow these guidelines:
 
+---
+
+### Issues
+
+We use **GitHub Issues** to track all work, including features, bug fixes, and chores:
+
+1. **Create an issue first** before starting work.  
+   - Use the appropriate template:  
+     - **Bug Report** → problems or unexpected behavior  
+     - **Feature Request** → new functionality  
+     - **Chore / Maintenance** → CI, tests, tooling, documentation  
+2. Reference the issue in commits and PRs:  
+   ```
+   chore(ci): add GitHub Actions workflow
+
+   Closes #12
+   ```
+
+3. **Branch from the issue**:  
+   - Using GitHub CLI:
+     ```
+     gh issue checkout <issue-number>
+     ```
+   - Or manually:
+     ```
+     git checkout dev
+     git pull origin dev
+     git checkout -b chore/12-add-gtest
+     ```
+
+---
+
 ### Branching
 
-- Branch **off `dev`**, never `main`.
-- Use descriptive branch names:
+- Branch **off `dev`**, never `main`.  
+- Name branches according to semantic-release type and issue:
 
-| Type                | Example                    |
-| ------------------- | -------------------------- |
-| Feature             | `feat/add-login-command`   |
-| Bugfix              | `fix/handle-empty-results` |
-| Chore / Maintenance | `chore/update-ci-pipeline` |
+| Type                | Example                        |
+| ------------------- | ------------------------------ |
+| Feature             | `feat/15-add-login-command`     |
+| Bugfix              | `fix/23-handle-empty-results`   |
+| Chore / Maintenance | `chore/12-update-ci-pipeline`   |
 
-**Example workflow:**
-
-```bash
-git checkout dev
-git pull origin dev
-git checkout -b feat/add-login-command
-```
+---
 
 ### Commit Messages
 
@@ -224,21 +250,87 @@ We follow **Semantic Release conventions**:
 | `refactor` | Code change, no new feature / fix |
 | `test`     | Adding/updating tests             |
 
-**Examples:**
-
-```bash
-git commit -m "feat(parser): add support for regex search"
-git commit -m "fix(grab): handle empty search results"
-git commit -m "chore(ci): update pipeline configuration"
+**Reference the issue in commits:**
 ```
+git commit -m "chore(ci): add GitHub Actions workflow
+
+Closes #12"
+```
+
+---
+
+### Contributing Workflow
+
+<details>
+<summary>Write Access Contributors</summary>
+
+If you **have write access** to this repository:
+
+1. Branch directly from `dev`:
+   ```
+   git checkout dev
+   git pull origin dev
+   git checkout -b feat/add-login-command
+   ```
+2. Make your changes, commit using semantic-release conventions, and reference the issue:
+   ```
+   git commit -m "feat(parser): add regex support
+
+   Closes #15"
+   ```
+3. Push your branch to the main repo:
+   ```
+   git push origin feat/add-login-command
+   ```
+4. Open a pull request targeting the `dev` branch.
+
+</details>
+
+<details>
+<summary>Fork Contributors</summary>
+
+If you **don’t have write access**, you need to fork the repo first:
+
+1. Click **Fork** on GitHub to create your personal copy.  
+2. Clone your fork locally:
+   ```
+   git clone https://github.com/your-username/your-repo.git
+   cd your-repo
+   ```
+3. Add the original repository as an upstream remote:
+   ```
+   git remote add upstream https://github.com/original-owner/your-repo.git
+   git fetch upstream
+   ```
+4. Branch off `dev` from the upstream repo:
+   ```
+   git checkout dev
+   git pull upstream dev
+   git checkout -b feat/add-login-command
+   ```
+5. Make your changes and commit using semantic-release conventions:
+   ```
+   git commit -m "feat(parser): add regex support
+
+   Closes #15"
+   ```
+6. Push your branch to **your fork**:
+   ```
+   git push origin feat/add-login-command
+   ```
+7. Open a pull request from your fork targeting the `dev` branch of the main repository.
+
+</details>
+
+---
 
 ### Pull Requests
 
-- Always target the **`dev` branch**.
-- Include tests for new features or fixes if possible.
-- Provide a clear description and reference relevant issues.
+- Always target the **`dev` branch**.  
+- Include tests for new features or fixes if possible.  
+- Reference the related issue (`Closes #<issue-number>`) to automatically close it when merged.  
+- Provide a clear description of what the PR does and why.
 
----
 
 ## AI Disclaimer
 

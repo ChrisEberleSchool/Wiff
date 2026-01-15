@@ -14,8 +14,12 @@ void GitCommand::execute(ApplicationContext &ctx) {
   // Search from home directory for dir that == target
   std::string currFile;
 
-  std::string dirPath = fs::current_path();
-  dirPath = "~";
+  fs::path dirPath =
+#ifdef _WIN32
+      std::getenv("USERPROFILE");
+#else
+      std::getenv("HOME");
+#endif
 
   for (const auto &dir_entry : fs::recursive_directory_iterator{
            dirPath, fs::directory_options::skip_permission_denied}) {
@@ -29,7 +33,8 @@ void GitCommand::execute(ApplicationContext &ctx) {
       continue;
 
     // check for .git
-    if (!this->isGit(dir_entry.path().relative_path()))
+
+    if (!this->isGit(dir_entry.path()))
       continue;
 
     foundDirs.push_back(dir_entry.path());
@@ -41,7 +46,7 @@ void GitCommand::execute(ApplicationContext &ctx) {
   } else {
     // navigate to projcet root using target[1]
     std::string command = "cd ";
-    command += foundDirs[0].filename().string();
+    command += foundDirs[0].string();
     std::cout << "COMMAND -> " << command << std::endl;
     // std::system(command);
   }
@@ -59,13 +64,10 @@ std::string GitCommand::usage() const {
 std::string GitCommand::name() const { return "git"; }
 
 bool GitCommand::isGit(const fs::path &path) {
-  // search current dir for.git
-  std::ranges::for_each(std::filesystem::directory_iterator{path},
-                        [](const auto &dir_entry) {
-                          if (dir_entry.path().filename().string() == ".git")
-                            return true;
-                          return false;
-                        });
-
+  for (const auto &entry : fs::directory_iterator(path)) {
+    if (entry.is_directory() && entry.path().filename() == ".git") {
+      return true;
+    }
+  }
   return false;
 }

@@ -22,6 +22,25 @@ install(TARGETS wiff
     RUNTIME DESTINATION /usr/bin
 )
 
+# -------------------------
+# Testing + GoogleTest
+# -------------------------
+include(CTest)
+enable_testing()
+
+include(FetchContent)
+
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+)
+
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+# 👇 THIS is what makes tests exist
+add_subdirectory(tests)
+
 # ---- CPack ----
 set(CPACK_PACKAGE_NAME "wiff")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})

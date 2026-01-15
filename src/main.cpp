@@ -1,14 +1,7 @@
-#include <chrono>
 #include <iostream>
-#include <memory>
 #include <string>
-#include <thread>
-#include <vector>
 
-#include "command/base/ICommand.h"
 #include "command/manager/CommandManager.h"
-
-#include "argument/ParsedArgs.h"
 #include "context/ApplicationContext.h"
 
 int main(int argc, char *argv[]) {

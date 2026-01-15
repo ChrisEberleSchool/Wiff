@@ -1,31 +1,24 @@
 #pragma once
 
 #include <filesystem>
-#include <iostream>
-#include <vector>
 #include <string>
-#include <memory>
-#include <stdexcept>
-#include <iomanip>
-#include <chrono>
-#include <sstream>
+#include <vector>
 
 #include "command/base/ICommand.h"
-#include "argument/ParsedArgs.h"
 #include "context/ApplicationContext.h"
 
 namespace fs = std::filesystem;
 
 struct FileEntry {
-    FileEntry(const fs::directory_entry& dir_entry)
-        : path(dir_entry.path()), size(dir_entry.file_size()),
-          date_last_modified(dir_entry.last_write_time()),
-          filename(path.filename().string()) {}
+  FileEntry(const fs::directory_entry &dir_entry)
+      : path(dir_entry.path()), size(dir_entry.file_size()),
+        date_last_modified(dir_entry.last_write_time()),
+        filename(path.filename().string()) {}
 
-    fs::path path;
-    uintmax_t size;
-    fs::file_time_type date_last_modified;
-    std::string filename;
+  fs::path path;
+  uintmax_t size;
+  fs::file_time_type date_last_modified;
+  std::string filename;
 };
 
 /**
@@ -33,38 +26,38 @@ struct FileEntry {
  */
 class GrabCommand : public ICommand {
 public:
-    std::vector<FileEntry> foundFiles;
+  std::vector<FileEntry> foundFiles;
 
-    GrabCommand();
+  GrabCommand();
 
-    void execute(ApplicationContext& ctx) override;
+  void execute(ApplicationContext &ctx) override;
 
-    std::string description() const override;
-    std::string usage() const override;
-    std::string name() const override;
+  std::string description() const override;
+  std::string usage() const override;
+  std::string name() const override;
+
 private:
-    void handleExtension(ApplicationContext& ctx);
-    void handleFileName(ApplicationContext& ctx);
-    void handleStump(ApplicationContext& ctx);
+  void handleExtension(ApplicationContext &ctx);
+  void handleFileName(ApplicationContext &ctx);
+  void handleStump(ApplicationContext &ctx);
 
-    void sortFoundFiles(ApplicationContext& ctx);
-    /**
-     * @brief creates the string representing the files size
-     */
-    std::string formatSize(uintmax_t bytes);
+  void sortFoundFiles(ApplicationContext &ctx);
+  /**
+   * @brief creates the string representing the files size
+   */
+  std::string formatSize(uintmax_t bytes);
 
-    /**
-     * @brief Formats the date section
-     */
-    std::string formatDate(const fs::file_time_type& ftime);
+  /**
+   * @brief Formats the date section
+   */
+  std::string formatDate(const fs::file_time_type &ftime);
 
-    /**
-     * @brief Prints to terminal the UI table for found files
-     */
-    void printTableHeader();
-    void benchmarkPrintMethod();
-    std::string printFoundFiles();
-
+  /**
+   * @brief Prints to terminal the UI table for found files
+   */
+  void printTableHeader();
+  void benchmarkPrintMethod();
+  std::string printFoundFiles();
 };
 /*
     Example output:

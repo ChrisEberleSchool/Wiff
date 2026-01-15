@@ -10,6 +10,10 @@ file(GLOB_RECURSE WIFF_SOURCES
     ${CMAKE_SOURCE_DIR}/src/*.cpp
 )
 
+# Create library
+add_library(wiff_lib ${WIFF_SOURCES})
+target_include_directories(wiff_lib PUBLIC ${CMAKE_SOURCE_DIR}/src)
+
 add_executable(wiff ${WIFF_SOURCES})
 
 target_include_directories(wiff PRIVATE
@@ -22,9 +26,7 @@ install(TARGETS wiff
     RUNTIME DESTINATION /usr/bin
 )
 
-# -------------------------
-# Testing + GoogleTest
-# -------------------------
+# GTesting
 include(CTest)
 enable_testing()
 
@@ -33,15 +35,16 @@ include(FetchContent)
 FetchContent_Declare(
   googletest
   URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# 👇 THIS is what makes tests exist
+# Testing sub dir
 add_subdirectory(tests)
 
-# ---- CPack ----
+# CPACK
 set(CPACK_PACKAGE_NAME "wiff")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Chris Eberle")

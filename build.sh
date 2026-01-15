@@ -29,7 +29,7 @@ cmake .. -DPROJECT_VERSION="$CMAKE_VERSION"
 cmake --build . -- -j$(nproc 2>/dev/null || echo 2)
 
 # GTesting
-ctest --output-on-failure
+ctest --verbose
 
 # Package only if Linux
 if [[ "$BUILD_OS" == "linux" ]]; then

@@ -109,33 +109,43 @@ void GitCommand::execute(ApplicationContext &ctx) {
     return;
   }
 
-  // Change to the project folder (foundDirs[0] is the path)
-  fs::current_path(foundDirs[0]);
-  std::cout << "Opening project at: " << foundDirs[0] << std::endl;
+  fs::path projectPath = fs::absolute(foundDirs[0]);
+  std::cout << "Found project at: " << projectPath << std::endl;
 
-  // Check if user specified a program to open with
-  if (ctx.parsedArgs.targets.size() < 2) {
-    std::cout << "No program specified to open with." << std::endl;
-    return;
+  // Determine which program to open with
+  std::string opener = "code"; // default to VS Code
+  if (ctx.parsedArgs.targets.size() >= 2) {
+    opener = ctx.parsedArgs.targets[1];
   }
 
-  // Build command using targets[1..n]
+  // Depending on OS and target opener create the sys command
   std::string userCommand;
-  for (size_t i = 1; i < ctx.parsedArgs.targets.size(); ++i) {
-    userCommand += ctx.parsedArgs.targets[i] + " ";
+  if (opener == "code" || opener == "vs") {
+    userCommand = "code \"" + projectPath.string() + "\"";
+  } else if (opener == "nvim") {
+    userCommand = "nvim \"" + projectPath.string() + "\"";
+  } else if (opener == "default") {
+#if defined(__APPLE__)
+    userCommand = "open \"" + projectPath.string() + "\"";
+#elif defined(__linux__)
+    userCommand = "xdg-open \"" + projectPath.string() + "\"";
+#elif defined(_WIN32) || defined(_WIN64)
+    userCommand = "explorer \"" + projectPath.string() + "\"";
+#endif
+  } else {
+    // If user typed some other program:
+    userCommand = opener + " \"" + projectPath.string() + "\"";
   }
 
   std::cout << "Running: " << userCommand << std::endl;
-
-  // Run the user’s command in the project folder
   int ret = std::system(userCommand.c_str());
   if (ret != 0)
     std::cerr << "Command failed with exit code: " << ret << std::endl;
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<double, std::milli> duration_double_ms = end - start;
-  std::cout << "Execution time (double): " << duration_double_ms.count()
-            << " ms" << std::endl;
+  std::cout << "Execution time: " << duration_double_ms.count() << " ms"
+            << std::endl;
 }
 
 std::string GitCommand::description() const {

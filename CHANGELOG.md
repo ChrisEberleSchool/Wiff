@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/ChrisEberleSchool/Wiff/compare/v1.1.0...v1.1.1) (2026-01-16)
+
+
+### Bug Fixes
+
+* default to vs code, removed change dir step as we can call it in one command ([7069b6e](https://github.com/ChrisEberleSchool/Wiff/commit/7069b6ef9b496c25084df52d4aea6c19db95b0d4))
+
 # [1.1.0](https://github.com/ChrisEberleSchool/Wiff/compare/v1.0.0...v1.1.0) (2026-01-16)
 
 

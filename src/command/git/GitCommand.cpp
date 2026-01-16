@@ -25,14 +25,15 @@ GitCommand::GitCommand() {
               "Program Files (x86)",
               "ProgramData",
               "Windows",
-              "Temp"
+              "Temp",
 #endif
 #if defined(__APPLE__)
               ".Trash",
               "Library",
               "Applications",
               "System",
-              "Volumes"
+              "Volumes",
+              "Pictures"
 #endif
 #if defined(__linux__)
               "Trash",
@@ -47,7 +48,9 @@ GitCommand::GitCommand() {
               "usr",
               "opt",
               "tmp",
-              "mnt"
+              "mnt",
+              "Pictures"
+
 #endif
   };
 }
@@ -100,16 +103,34 @@ void GitCommand::execute(ApplicationContext &ctx) {
   }
   // stop the loading thread
   ctx.threadManager.stopThread("loadingUI");
-  // For now just direct to first foundDir
+
   if (foundDirs.empty()) {
     std::cout << "No Git projects found." << std::endl;
-  } else {
-    // navigate to projcet root using target[1]
-    std::string command = "cd ";
-    command += foundDirs[0].string();
-    std::cout << "COMMAND -> " << command << std::endl;
-    // std::system(command);
+    return;
   }
+
+  // Change to the project folder (foundDirs[0] is the path)
+  fs::current_path(foundDirs[0]);
+  std::cout << "Opening project at: " << foundDirs[0] << std::endl;
+
+  // Check if user specified a program to open with
+  if (ctx.parsedArgs.targets.size() < 2) {
+    std::cout << "No program specified to open with." << std::endl;
+    return;
+  }
+
+  // Build command using targets[1..n]
+  std::string userCommand;
+  for (size_t i = 1; i < ctx.parsedArgs.targets.size(); ++i) {
+    userCommand += ctx.parsedArgs.targets[i] + " ";
+  }
+
+  std::cout << "Running: " << userCommand << std::endl;
+
+  // Run the user’s command in the project folder
+  int ret = std::system(userCommand.c_str());
+  if (ret != 0)
+    std::cerr << "Command failed with exit code: " << ret << std::endl;
 
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<double, std::milli> duration_double_ms = end - start;

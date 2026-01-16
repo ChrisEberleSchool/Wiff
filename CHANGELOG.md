@@ -1,3 +1,18 @@
+# [1.1.0](https://github.com/ChrisEberleSchool/Wiff/compare/v1.0.0...v1.1.0) (2026-01-16)
+
+
+### Bug Fixes
+
+* arm64 build failing due to gtest fetch fix ([75b99e3](https://github.com/ChrisEberleSchool/Wiff/commit/75b99e3037da12d64615780648dd972701b86368))
+* performance optimizations to scan ([1c5878b](https://github.com/ChrisEberleSchool/Wiff/commit/1c5878bac4d6473db22d20d1570da1264cff707d))
+
+
+### Features
+
+* added bash command execution for reroute ([393f1e0](https://github.com/ChrisEberleSchool/Wiff/commit/393f1e0149c61f6aaee0a053abbb574257760fa1))
+* added git nav base code along with clangd autobuild in build.sh and reformated and removed unneeded includes ([66d7e8a](https://github.com/ChrisEberleSchool/Wiff/commit/66d7e8aae99bd575a8f67666078577347eb48454))
+* git command mvp (avoid trash dirs for next commit) ([0c5c81c](https://github.com/ChrisEberleSchool/Wiff/commit/0c5c81cf8981f679435a35725b9f68cbd4036153))
+
 # 1.0.0 (2026-01-14)
 
 

@@ -6,30 +6,41 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Sources
 file(GLOB_RECURSE WIFF_SOURCES
     ${CMAKE_SOURCE_DIR}/src/*.cpp
 )
 
-# Create library
+# Library (compile sources ONCE)
 add_library(wiff_lib ${WIFF_SOURCES})
-target_include_directories(wiff_lib PUBLIC ${CMAKE_SOURCE_DIR}/src)
 
-add_executable(wiff ${WIFF_SOURCES})
-
-target_include_directories(wiff PRIVATE
-    ${CMAKE_SOURCE_DIR}/src
+target_include_directories(wiff_lib
+    PUBLIC
+        ${CMAKE_SOURCE_DIR}/src
 )
 
-target_compile_options(wiff PRIVATE -Wall -Wextra -Wpedantic)
+target_compile_options(wiff_lib
+    PRIVATE
+        -Wall -Wextra -Wpedantic
+)
+
+# Executable (NO sources here)
+add_executable(wiff src/main.cpp) # <-- ensure main.cpp exists
+
+target_link_libraries(wiff
+    PRIVATE
+        wiff_lib
+)
 
 install(TARGETS wiff
     RUNTIME DESTINATION /usr/bin
 )
 
-# GTesting
+# =========================
+# Testing
+# =========================
 include(CTest)
 enable_testing()
-
 include(FetchContent)
 
 FetchContent_Declare(
@@ -41,10 +52,11 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# Testing sub dir
 add_subdirectory(tests)
 
-# CPACK
+# =========================
+# CPack
+# =========================
 set(CPACK_PACKAGE_NAME "wiff")
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Chris Eberle")

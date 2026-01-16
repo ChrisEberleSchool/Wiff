@@ -24,4 +24,6 @@ private:
   bool isGit(const fs::path &path);
 
   std::unordered_set<std::string> skipDirs;
+
+  bool isCliEditor(const std::string &opener);
 };

@@ -119,11 +119,20 @@ void GitCommand::execute(ApplicationContext &ctx) {
   }
 
   // Depending on OS and target opener create the sys command
+
+  // Build command
   std::string userCommand;
+
   if (opener == "code" || opener == "vs") {
     userCommand = "code \"" + projectPath.string() + "\"";
-  } else if (opener == "nvim") {
-    userCommand = "nvim \"" + projectPath.string() + "\"";
+  } else if (isCliEditor(opener)) {
+#if defined(_WIN32) || defined(_WIN64)
+    userCommand =
+        "cmd /C \"cd /D \"" + projectPath.string() + "\" && " + opener + "\"";
+#else
+    userCommand =
+        "sh -c \"cd '" + projectPath.string() + "' && " + opener + " .\"";
+#endif
   } else if (opener == "default") {
 #if defined(__APPLE__)
     userCommand = "open \"" + projectPath.string() + "\"";
@@ -133,7 +142,7 @@ void GitCommand::execute(ApplicationContext &ctx) {
     userCommand = "explorer \"" + projectPath.string() + "\"";
 #endif
   } else {
-    // If user typed some other program:
+    // Unknown program: assume GUI-style invocation
     userCommand = opener + " \"" + projectPath.string() + "\"";
   }
 
@@ -158,3 +167,10 @@ std::string GitCommand::usage() const {
 }
 
 std::string GitCommand::name() const { return "git"; }
+
+bool GitCommand::isCliEditor(const std::string &opener) {
+  static const std::unordered_set<std::string> cliEditors = {
+      "nvim", "vim",   "vi",    "nano", "emacs", "emacsclient",
+      "hx",   "helix", "micro", "kak",  "less"};
+  return cliEditors.contains(opener);
+}

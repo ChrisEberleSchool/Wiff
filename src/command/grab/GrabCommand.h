@@ -9,6 +9,12 @@
 
 namespace fs = std::filesystem;
 
+/**
+ * @ brief Used to track found files.
+ *
+ * TODO:: Move this to a seperate header or reconsider its need...
+ *
+ * */
 struct FileEntry {
   FileEntry(const fs::directory_entry &dir_entry)
       : path(dir_entry.path()), size(dir_entry.file_size()),
@@ -22,7 +28,7 @@ struct FileEntry {
 };
 
 /**
- * @brief Finder tool.
+ * @brief Finder utility.
  */
 class GrabCommand : public ICommand {
 public:
@@ -42,21 +48,14 @@ private:
   void handleStump(ApplicationContext &ctx);
 
   void sortFoundFiles(ApplicationContext &ctx);
-  /**
-   * @brief creates the string representing the files size
-   */
-  std::string formatSize(uintmax_t bytes);
 
-  /**
-   * @brief Formats the date section
-   */
+  std::string formatSize(uintmax_t bytes);
   std::string formatDate(const fs::file_time_type &ftime);
 
   /**
    * @brief Prints to terminal the UI table for found files
    */
   void printTableHeader();
-  void benchmarkPrintMethod();
   std::string printFoundFiles();
 };
 /*

@@ -9,9 +9,25 @@
 
 #include "argument/ParsedArgs.h"
 
+/**
+ *@ brief default constructor (does nothing here)
+ * */
 GrabCommand::GrabCommand() = default;
+
+/**
+ *@ brief returns the command namw (command is defined here)
+ * */
 std::string GrabCommand::name() const { return "grab"; }
+
+/**
+ *@ brief Main execution block that is called from main
+ * */
 void GrabCommand::execute(ApplicationContext &ctx) {
+  // Ensure we are searching for something
+  if (ctx.parsedArgs.targets.empty())
+    throw std::invalid_argument(
+        "Please enter a valid target you would like to search for!");
+
   // switch handling depending on type
   switch (ctx.parsedArgs.searchFlag) {
   case SearchBy::Extension:
@@ -26,21 +42,47 @@ void GrabCommand::execute(ApplicationContext &ctx) {
   default:
     throw std::logic_error("Unknown TypeFlag");
   }
+
+  // Pretty explanatory what this is doing down here lol
+  sortFoundFiles(ctx);
+
+  // Program ends after execute so stop the loading animation
+  ctx.threadManager.stopThread("loadingUI");
+
+  // Draw At the end using one print statement cause speed
+  printTableHeader();
+  printFoundFiles();
+
+  // Handle no file found case (Probaly move this elsewhere later on)
+  if (this->foundFiles.empty()) {
+    std::cout << "No Files Matching: " << ctx.parsedArgs.targets[0] << " In "
+              << ctx.parsedArgs.dirPath << std::endl;
+  }
 }
 
+/**
+ *@ brief returns a description of the command.
+          This is called by HelpCommannd for showing list.
+ * */
 std::string GrabCommand::description() const {
   return "Searches for files in bulk by name or extension. Defaults by full "
-         "filename if no flag is provided. Also Defaults to searching current "
+         "filename if no flag is provided. Defaults to searching current "
          "directory.";
 }
 
+/**
+ *@ brief returns the usage of the command.
+          This is called by HelpCommannd for showing list.
+ * */
 std::string GrabCommand::usage() const {
   return "wiff grab [search-flag] [target] [sort-flag] [directory]";
 }
 
+/**
+ *@ brief Handles the recursive search for the extension
+          flag case
+ * */
 void GrabCommand::handleExtension(ApplicationContext &ctx) {
-  if (ctx.parsedArgs.targets.empty())
-    throw std::runtime_error("No extension provided for search.");
 
   for (const auto &dir_entry : fs::recursive_directory_iterator{
            ctx.parsedArgs.dirPath,
@@ -57,14 +99,12 @@ void GrabCommand::handleExtension(ApplicationContext &ctx) {
 
     foundFiles.push_back(FileEntry(dir_entry));
   }
-
-  sortFoundFiles(ctx);
-  ctx.threadManager.stopThread("loadingUI");
-  benchmarkPrintMethod();
 }
 
+/**
+ *@ brief Handles the recursive search for the default
+ * */
 void GrabCommand::handleFileName(ApplicationContext &ctx) {
-  // recursive loop starting from provided directory
   for (const auto &dir_entry : fs::recursive_directory_iterator{
            ctx.parsedArgs.dirPath,
        }) {
@@ -79,14 +119,13 @@ void GrabCommand::handleFileName(ApplicationContext &ctx) {
     // add file to vector
     foundFiles.push_back(FileEntry(dir_entry));
   }
-
-  sortFoundFiles(ctx);
-  ctx.threadManager.stopThread("loadingUI");
-  benchmarkPrintMethod();
 }
 
+/**
+ *@ brief Handles the recursive search for the name flag
+          which just takes the files name not extension
+ * */
 void GrabCommand::handleStump(ApplicationContext &ctx) {
-  // recursive loop starting from provided directory
   for (const auto &dir_entry : fs::recursive_directory_iterator{
            ctx.parsedArgs.dirPath,
            fs::directory_options::skip_permission_denied}) {
@@ -101,14 +140,13 @@ void GrabCommand::handleStump(ApplicationContext &ctx) {
     // add file to vector
     foundFiles.push_back(FileEntry(dir_entry));
   }
-
-  sortFoundFiles(ctx);
-  ctx.threadManager.stopThread("loadingUI");
-  benchmarkPrintMethod();
 }
 
+/**
+ *@ brief Prints to console in one print statement
+          the found files
+ * */
 std::string GrabCommand::printFoundFiles() {
-  printTableHeader();
   std::ostringstream out;
   for (const FileEntry &file : foundFiles) {
     out << std::left << std::setw(20) << file.path.filename().string()
@@ -119,6 +157,9 @@ std::string GrabCommand::printFoundFiles() {
   return out.str();
 }
 
+/**
+ *@ brief Sorts the found files depending on sortby flags given
+ * */
 void GrabCommand::sortFoundFiles(ApplicationContext &ctx) {
   switch (ctx.parsedArgs.sortFlag) {
   case SortBy::Alpha:
@@ -181,15 +222,4 @@ std::string GrabCommand::formatDate(const fs::file_time_type &ftime) {
   std::ostringstream out;
   out << std::put_time(&tm, "%Y-%m-%d");
   return out.str();
-}
-
-void GrabCommand::benchmarkPrintMethod() {
-  // Method 1: ostringstream
-  auto start1 = std::chrono::high_resolution_clock::now();
-  std::string result1 = printFoundFiles();
-  std::cout << result1;
-  auto end1 = std::chrono::high_resolution_clock::now();
-  auto duration1 =
-      duration_cast<std::chrono::microseconds>(end1 - start1).count();
-  std::cout << "printFoundFiles1() took: " << duration1 << " µs\n";
 }

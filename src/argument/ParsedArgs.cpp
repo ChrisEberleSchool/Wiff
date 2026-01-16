@@ -13,10 +13,11 @@ ParsedArgs::ParsedArgs(int argc, char *argv[]) {
   searchFlag = SearchBy::FileName;
 
   // default the dirPath to the current directory
-  dirPath = fs::current_path();
+  dirPath = fs::current_path().string();
 
   initFlagHandlers();
 
+  // this sets the command arg
   command = argv[1];
 
   for (int i = 2; i < argc; ++i) {

@@ -1,14 +1,15 @@
 #include "./CommandManager.h"
 
-#include <iostream>
 #include <stdexcept>
 
+#include "command/git/GitCommand.h"
 #include "command/grab/GrabCommand.h"
 #include "command/help/HelpCommand.h"
 
 CommandManager::CommandManager() {
   // populate the command manager
   this->add(std::make_unique<GrabCommand>());
+  this->add(std::make_unique<GitCommand>());
   this->add(std::make_unique<HelpCommand>(this->commands()));
 }
 

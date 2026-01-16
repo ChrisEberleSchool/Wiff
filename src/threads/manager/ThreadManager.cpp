@@ -3,29 +3,29 @@
 ThreadManager::ThreadManager() = default;
 
 ThreadManager::~ThreadManager() {
-    for (auto& [name, thread] : threads) {
-        if (thread) {
-            thread->stop();
-        }
+  for (auto &[name, thread] : threads) {
+    if (thread) {
+      thread->stop();
     }
+  }
 }
 
-void ThreadManager::add(const std::string& threadName, std::unique_ptr<ThreadedObject> thread) {
-    threads.emplace(threadName, std::move(thread));
+void ThreadManager::add(const std::string &threadName,
+                        std::unique_ptr<ThreadedObject> thread) {
+  threads.emplace(threadName, std::move(thread));
 }
 
-void ThreadManager::startThread(const std::string& threadName) {
-    auto it = threads.find(threadName);
+void ThreadManager::startThread(const std::string &threadName) {
+  auto it = threads.find(threadName);
 
-    if(it != threads.end()) {
-        it->second->start();
-    }
+  if (it != threads.end()) {
+    it->second->start();
+  }
 }
-void ThreadManager::stopThread(const std::string& threadName) {
-    auto it = threads.find(threadName);
+void ThreadManager::stopThread(const std::string &threadName) {
+  auto it = threads.find(threadName);
 
-    if(it != threads.end()) {
-        it->second->stop();
-    }
+  if (it != threads.end()) {
+    it->second->stop();
+  }
 }
-

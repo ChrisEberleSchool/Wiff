@@ -4,15 +4,15 @@
 
 class ThreadedObject {
 public:
-    ThreadedObject();
-    virtual ~ThreadedObject();
+  ThreadedObject();
+  virtual ~ThreadedObject();
 
-    void start();
-    void stop();
+  void start();
+  void stop();
 
 protected:
-    virtual void run(std::stop_token stoken) = 0;
+  virtual void run(std::stop_token stoken) = 0;
 
 private:
-    std::jthread worker_;
+  std::jthread worker_;
 };

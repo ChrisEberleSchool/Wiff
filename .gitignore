@@ -9,3 +9,7 @@
 
 #MAC build
 .DS_Store
+
+# CMake / clang tooling
+compile_commands.json
+.cache/

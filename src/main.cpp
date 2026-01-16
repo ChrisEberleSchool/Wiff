@@ -1,14 +1,7 @@
-#include <chrono>
 #include <iostream>
-#include <memory>
 #include <string>
-#include <thread>
-#include <vector>
 
-#include "command/base/ICommand.h"
 #include "command/manager/CommandManager.h"
-
-#include "argument/ParsedArgs.h"
 #include "context/ApplicationContext.h"
 
 int main(int argc, char *argv[]) {
@@ -16,7 +9,6 @@ int main(int argc, char *argv[]) {
     // Initialize the Application Context
     ApplicationContext appCtx(argc, argv);
     // Immediately begin the loading animation
-    // thread upon program start.
     appCtx.threadManager.startThread("loadingUI");
 
     // Create the command manager and execute

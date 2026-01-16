@@ -1,11 +1,10 @@
 #pragma once
 
-#include <filesystem>
-#include <string>
-#include <vector>
-
 #include "command/base/ICommand.h"
 #include "context/ApplicationContext.h"
+#include <filesystem>
+#include <string>
+#include <unordered_set>
 
 namespace fs = std::filesystem;
 
@@ -23,4 +22,6 @@ public:
 
 private:
   bool isGit(const fs::path &path);
+
+  std::unordered_set<std::string> skipDirs;
 };

@@ -12,6 +12,9 @@ HelpCommand::HelpCommand(
 std::string HelpCommand::name() const { return "help"; }
 
 void HelpCommand::execute(ApplicationContext &ctx) {
+  // stop loading thread immediately, not needed for help command
+  ctx.threadManager.stopThread("loadingUI");
+
   if (ctx.parsedArgs.targets.empty()) {
     // iterate over commands in the mao
     printOverview();
@@ -32,8 +35,8 @@ void HelpCommand::printOverview() const {
   for (const auto *cmd : sorted) {
     std::cout << "  " << std::left << std::setw(8) << cmd->name()
               << cmd->description() << "\n"
-              << "  " << std::setw(12) << ""
-              << "Usage:    " << cmd->usage() << "\n\n";
+              << "  " << std::setw(12) << "" << "Usage:    " << cmd->usage()
+              << "\n\n";
   }
   std::cout << "Run 'wiff help <command>' for details.\n";
 }

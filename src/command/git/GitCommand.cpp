@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "argument/ParsedArgs.h"
+#include "util/StringUtils.h"
 
 GitCommand::GitCommand() {
   // cross platform dirs to skip
@@ -71,36 +72,35 @@ void GitCommand::execute(ApplicationContext &ctx) {
 
   auto start = std::chrono::steady_clock::now();
 
-  fs::path target{ctx.parsedArgs.targets[0]};
+  // normalize target once
+  fs::path targetPath{ctx.parsedArgs.targets[0]};
+  std::string targetLower = toLower(targetPath.string());
 
-  // Iterate through directory starting from system home to find target dir
   for (auto i = fs::recursive_directory_iterator(homeDir);
-       i != fs::recursive_directory_iterator(); i++) {
+       i != fs::recursive_directory_iterator(); ++i) {
 
-    // if not a dir skip
     if (!i->is_directory())
       continue;
 
-    // set the current file string
     currDir = i->path().filename();
 
-    // SKIP DIRECTORIES opted out of
     if (this->skipDirs.contains(currDir.string())) {
       i.disable_recursion_pending();
       continue;
     }
 
-    // non matching file extensions skip
-    if (currDir != target)
+    std::string currLower = toLower(currDir.string());
+
+    if (currLower != targetLower)
       continue;
 
-    // Git projects must have .git folder in root dir to be recognized
     if (!fs::is_directory(i->path() / ".git"))
       continue;
 
     foundDirs.push_back(i->path());
     break;
   }
+
   // stop the loading thread
   ctx.threadManager.stopThread("loadingUI");
 

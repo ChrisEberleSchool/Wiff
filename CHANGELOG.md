@@ -1,3 +1,13 @@
+## [1.1.2](https://github.com/ChrisEberleSchool/Wiff/compare/v1.1.1...v1.1.2) (2026-01-17)
+
+
+### Bug Fixes
+
+* added dir feature to the git command and updated README ([d623971](https://github.com/ChrisEberleSchool/Wiff/commit/d62397157d10bc1cb6df166d030a7cccdde9dad4))
+* added preffered dir search optimization ([b8b8e6a](https://github.com/ChrisEberleSchool/Wiff/commit/b8b8e6a5a18487a42ed70c6da1cd11d4a898489d))
+* directory not changing when git jumping into cli ([044a3d2](https://github.com/ChrisEberleSchool/Wiff/commit/044a3d2b5739d095142369a3fe46e3d8387f7333))
+* git command now case insensitive, added stringutils header ([64fecab](https://github.com/ChrisEberleSchool/Wiff/commit/64fecab8e0e483d05350c3fe0e7d9486cfd36fe1))
+
 ## [1.1.1](https://github.com/ChrisEberleSchool/Wiff/compare/v1.1.0...v1.1.1) (2026-01-16)
 
 

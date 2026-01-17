@@ -26,4 +26,6 @@ private:
   std::unordered_set<std::string> skipDirs;
 
   bool isCliEditor(const std::string &opener);
+
+  bool recurseDir(const fs::path &root, const std::string &targetLower);
 };

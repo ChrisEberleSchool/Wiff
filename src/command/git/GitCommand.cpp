@@ -40,7 +40,6 @@ GitCommand::GitCommand() {
               "Trash",
               ".local",
               "Downloads",
-              "Desktop",
               "snap",
               "lib",
               "var",
@@ -57,6 +56,7 @@ GitCommand::GitCommand() {
 }
 
 void GitCommand::execute(ApplicationContext &ctx) {
+  // init here prevents continous reint in recursive loop
   fs::path currDir;
 
   fs::path homeDir =
@@ -72,34 +72,39 @@ void GitCommand::execute(ApplicationContext &ctx) {
 
   auto start = std::chrono::steady_clock::now();
 
-  // normalize target once
-  fs::path targetPath{ctx.parsedArgs.targets[0]};
-  std::string targetLower = toLower(targetPath.string());
+  // takes the project name we are searching for and sets
+  // it to lower case so we still find projects regardless
+  // off capitlization.
+  std::string targetLower = toLower(ctx.parsedArgs.targets[0]);
 
-  for (auto i = fs::recursive_directory_iterator(homeDir);
-       i != fs::recursive_directory_iterator(); ++i) {
+  // commondevdirs is the list of common dirs youd most find github projects in
+  std::vector<std::string> commonDevDirs{"dev", "documents", "projects",
+                                         "github", "code"};
+  bool foundEarly = false;
 
-    if (!i->is_directory())
-      continue;
-
-    currDir = i->path().filename();
-
-    if (this->skipDirs.contains(currDir.string())) {
-      i.disable_recursion_pending();
-      continue;
+  for (const auto &d : commonDevDirs) {
+    fs::path p = homeDir / d;
+    if (fs::exists(p) && fs::is_directory(p)) {
+      // first recurse into it
+      if (this->recurseDir(p, targetLower)) {
+        // if found make sure we set foundEarly true
+        foundEarly = true;
+        break;
+      } else {
+        // wasnt found so add to the set of avoid dirs
+        skipDirs.insert(d);
+      }
     }
-
-    std::string currLower = toLower(currDir.string());
-
-    if (currLower != targetLower)
-      continue;
-
-    if (!fs::is_directory(i->path() / ".git"))
-      continue;
-
-    foundDirs.push_back(i->path());
-    break;
   }
+  // only recurse from home dir if not found early
+  if (!foundEarly) {
+    this->recurseDir(homeDir, targetLower);
+  }
+
+  auto end = std::chrono::steady_clock::now();
+  std::chrono::duration<double, std::milli> duration_double_ms = end - start;
+  std::cout << "Execution time: " << duration_double_ms.count() << " ms"
+            << std::endl;
 
   // stop the loading thread
   ctx.threadManager.stopThread("loadingUI");
@@ -113,16 +118,16 @@ void GitCommand::execute(ApplicationContext &ctx) {
   std::cout << "Found project at: " << projectPath << std::endl;
 
   // Determine which program to open with
-  std::string opener = "code"; // default to VS Code
+  // init with 'code' as default if non second target
+  std::string opener = "code";
   if (ctx.parsedArgs.targets.size() >= 2) {
     opener = ctx.parsedArgs.targets[1];
   }
 
-  // Depending on OS and target opener create the sys command
-
   // Build command
   std::string userCommand;
 
+  // Depending on OS and target opener create the sys command
   if (opener == "code" || opener == "vs") {
     userCommand = "code \"" + projectPath.string() + "\"";
   } else if (isCliEditor(opener)) {
@@ -150,20 +155,17 @@ void GitCommand::execute(ApplicationContext &ctx) {
   int ret = std::system(userCommand.c_str());
   if (ret != 0)
     std::cerr << "Command failed with exit code: " << ret << std::endl;
-
-  auto end = std::chrono::steady_clock::now();
-  std::chrono::duration<double, std::milli> duration_double_ms = end - start;
-  std::cout << "Execution time: " << duration_double_ms.count() << " ms"
-            << std::endl;
 }
 
 std::string GitCommand::description() const {
-  return "Opens github projects given the project name and program to open "
-         "with";
+  return "Opens github projects given the project name. Defaults to vs code if "
+         "no program to open with target is defined";
 }
 
 std::string GitCommand::usage() const {
-  return "wiff git [project-name] [program-to-open-with]";
+  return "wiff git [project-name] <or if u want to open with something else> "
+         "wiff git [project-name] "
+         "[program-to-open-with]";
 }
 
 std::string GitCommand::name() const { return "git"; }
@@ -173,4 +175,33 @@ bool GitCommand::isCliEditor(const std::string &opener) {
       "nvim", "vim",   "vi",    "nano", "emacs", "emacsclient",
       "hx",   "helix", "micro", "kak",  "less"};
   return cliEditors.contains(opener);
+}
+
+bool GitCommand::recurseDir(const fs::path &root,
+                            const std::string &targetLower) {
+  for (auto it = fs::recursive_directory_iterator(
+           root, fs::directory_options::skip_permission_denied);
+       it != fs::recursive_directory_iterator(); ++it) {
+
+    if (!it->is_directory())
+      continue;
+
+    const std::string dirName = it->path().filename().string();
+
+    if (skipDirs.contains(dirName)) {
+      it.disable_recursion_pending();
+      continue;
+    }
+
+    if (toLower(dirName) != targetLower)
+      continue;
+
+    if (!fs::is_directory(it->path() / ".git"))
+      continue;
+
+    foundDirs.push_back(it->path());
+    return true;
+  }
+
+  return false;
 }

@@ -1,6 +1,6 @@
 # Wiff
 
-**Wiff** is a fast, versatile command-line utility suite written in C++ that goes beyond standard CLI tools. It starts with powerful bulk file search capabilities and aims to grow into a full toolkit of commands that provide functionality typical command-line utilities don’t offer — like advanced file discovery, disk usage insights, identifying oversized or redundant files, and other productivity-boosting operations — all designed to save time and streamline file management.
+**Wiff** is a half decent CLI utility tool for all platforms. The current most useful command is the git command which very quickly opens any git cloned projects on your pc without specifying a name. More commands will be created in the future and a list of exisiting commands plus usages can be found below.
 
 [![Release](https://img.shields.io/github/v/release/ChrisEberleSchool/Wiff?color=blue&label=latest)](https://github.com/ChrisEberleSchool/Wiff/releases)
 [![License](https://img.shields.io/github/license/ChrisEberleSchool/Wiff)](LICENSE)
@@ -11,9 +11,9 @@
 
 - [Requirements](#requirements)
 - [Downloading & Installing](#downloading--installing)
-  - [User Installation (.deb)](#user-installation-prebuilt-packages)
+  - [User Installation (Prebuilt Packages)](#user-installation-prebuilt-packages)
   - [Building from Source](#building-from-source)
-- [Usage Guide](#wiff-guide)
+- [Wiff Guide](#wiff-guide)
 - [Contributing](#contributing)
 - [AI Disclaimer](#ai-disclaimer)
 - [License](#license)
@@ -24,125 +24,133 @@
 
 ### For Users
 
-- **Operating System:** Linux, macOS
+- **Operating System:** Linux, macOS  
 - **Privileges:** `sudo` access for installing `.deb` packages (Linux)
 
 ### For Developers / Building from Source
 
 #### Linux
 
-- **g++ compiler** (supports C++23)
-- **dpkg-deb** (for building `.deb` packages)
+- **g++ compiler** (C++23)
 - **CMake** (for building from source)
 
 #### macOS
 
-- **Apple clang++** (version 15+ for C++20/23 features, including `std::jthread`)
-- **CMake** (for building from source)
-- **Homebrew** (optional, for installing dependencies)
+- **Apple clang++** (v15+ for C++20/23 features, including `std::jthread`)
+- **CMake**
 
 #### Windows
 
-- **MSVC / Visual Studio 2022+** (with C++20/23 support)
-- **CMake** (for cross-platform builds)
-- **Git** (for cloning repository)
+- **MSVC** (C++20/23 support)
+- **CMake**
+- **Git**
 
----
 
 ## Downloading & Installing Wiff
 
 ### User Installation (Prebuilt Packages)
 
-<details>
-  <summary>Linux (64-bit `amd64`) or ARM64</summary>
+#### Linux (64-bit `amd64` or ARM64)
 
-1. Download the `.deb` release for your architecture from releases.
+1. Download the `.deb` release for your architecture from the GitHub releases page.
 
-
-2. Install it like this putting in the deb filename you downloaded:
+2. Install the package (replace with the file you downloaded):
 
 ```bash
 sudo apt install ~/Downloads/<DOWNLOADED_DEB_FILE_GOES_HERE>
 ```
 
-3. Test a basic command:
+3. Verify the installation:
 
 ```bash
 wiff grab -e txt --size ~/Documents
 ```
 
-**Uninstalling Wiff**
+**Uninstall Wiff**
 
 ```bash
 sudo apt purge wiff
 ```
 
-</details>
-
-<details>
-  <summary>macOS</summary>
-
-- **N/A** (No prebuilt package available yet)
-- You can build from source using the instructions below.
-
-</details>
-
-<details>
-  <summary>Windows</summary>
-
-- **N/A** (No prebuilt package available yet)
-- Build from source using Visual Studio + CMake.
-
-</details>
-
 ---
 
 ### Building from Source
 
-This works on **Linux, macOS, and Windows**
+The following instructions apply when no prebuilt package is available.
 
-<details>
-  <summary>Build Instructions</summary>
+#### macOS (Apple Silicon & Intel)
 
-1. Clone the repository:
+**Requirements**
+- macOS 12+
+- Apple `clang++` (Xcode Command Line Tools)
+- CMake 3.26+
+- Git
+
+**Steps**
 
 ```bash
 git clone https://github.com/ChrisEberleSchool/Wiff.git
 cd Wiff
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Release
 ```
 
-2. (Optional) On Linux, check your architecture matches CPack build:
+The `wiff` binary will be located in the `build/` directory:
 
 ```bash
-uname -m   # x86_64 or aarch64
+./wiff
 ```
 
-3. Run the build script:
+(Optional) Move it into your PATH:
 
 ```bash
-./build.sh
+sudo mv wiff /usr/local/bin
 ```
 
-- On Linux, this will create a `.deb` in the `build/` folder.
-- On macOS, this will build the `wiff` binary only.
+---
 
-4. Run the binary:
+#### Windows (x64)
 
-```bash
-./build/wiff
-# or if installed via .deb
-wiff grab -e txt --size ~/Documents
+**Requirements**
+- Windows 10/11
+- Visual Studio 2022+
+  - Desktop development with C++
+- CMake 3.26+
+- Git
+
+**Steps (PowerShell)** 
+
+```powershell
+git clone https://github.com/ChrisEberleSchool/Wiff.git
+cd Wiff
+mkdir build
+cd build
+cmake .. -G "Visual Studio 17 2022"
+cmake --build . --config Release
 ```
 
-</details>
+---
+
 
 
 ## Wiff Guide
 
-### Commands
+### Commands Overview
 
-**grab**  
-Searches for files in bulk by name or extension. Defaults to filename search if no flag is provided.
+| Command | Description |
+| ------- | ----------- |
+| `grab`  | Search for files in bulk by name or extension. Defaults to filename search if no flag is provided. |
+| `git`   | Open a Git project by name. Defaults to VS Code, can specify another editor as an optional argument. |
+| `help`  | Show help information for Wiff commands. |
+
+---
+
+### grab Command
+
+**Description:**  
+Searches for files by name or extension, with optional sorting and directory target.
 
 **Usage:**
 
@@ -150,23 +158,14 @@ Searches for files in bulk by name or extension. Defaults to filename search if 
 wiff grab [search-flag] [target] [sort-flag] [directory]
 ```
 
-**help**  
-Shows help information for commands:
-
-```bash
-wiff help [command]
-```
-
----
-
-### Search Flags
+**Search Flags:**
 
 | Flag             | Description                                 |
 | ---------------- | ------------------------------------------- |
 | `-e <extension>` | Find files by extension                     |
 | `-n <file-body>` | Find files by name body (without extension) |
 
-### Sort Flags
+**Sort Flags:**
 
 | Flag      | Description                                    |
 | --------- | ---------------------------------------------- |
@@ -174,21 +173,62 @@ wiff help [command]
 | `--date`  | Sort results by date descending (newest first) |
 | `--alpha` | Sort results alphabetically (default)          |
 
-### Examples
-
-- Find all `.txt` files in the current directory and sort by size:
+**Examples:**
 
 ```bash
 wiff grab -e txt --size
-```
-
-- Find all files named `README` in the `Documents` directory and sort by date:
-
-```bash
 wiff grab -n README --date ~/Documents
 ```
 
 ---
+
+### git Command
+
+**Description:**  
+Open a Git project by name. Defaults to VS Code if no editor is specified.
+
+**Usage:**
+
+```bash
+wiff git <project-name> [editor]
+```
+
+**Behavior:**
+
+- `project-name`: The name of the project folder to search for.  
+- `editor` (optional): Specify which editor to open the project with (e.g., `nvim`, `code`, `subl`).  
+- Defaults to VS Code if `editor` is not provided.
+- if you just want to switch to that projects directory in th terminal then type dir for editor.
+
+**Examples:**
+
+```bash
+wiff git my-project
+wiff git my-project nvim
+wiff git my-project subl
+wiff git my-project dir
+```
+
+---
+
+### help Command
+
+**Description:**  
+Show help information for any Wiff command.
+
+**Usage:**
+
+```bash
+wiff help [command]
+```
+
+**Examples:**
+
+```bash
+wiff help grab
+wiff help git
+```
+
 
 ## Contributing
 

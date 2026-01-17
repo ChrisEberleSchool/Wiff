@@ -117,38 +117,47 @@ void GitCommand::execute(ApplicationContext &ctx) {
   fs::path projectPath = fs::absolute(foundDirs[0]);
   std::cout << "Found project at: " << projectPath << std::endl;
 
-  // Determine which program to open with
-  // init with 'code' as default if non second target
   std::string opener = "code";
+  bool cdOnly = false;
+
   if (ctx.parsedArgs.targets.size() >= 2) {
-    opener = ctx.parsedArgs.targets[1];
+    if (ctx.parsedArgs.targets[1] == "dir") {
+      cdOnly = true;
+    } else {
+      opener = ctx.parsedArgs.targets[1];
+    }
   }
 
-  // Build command
   std::string userCommand;
 
-  // Depending on OS and target opener create the sys command
-  if (opener == "code" || opener == "vs") {
-    userCommand = "code \"" + projectPath.string() + "\"";
-  } else if (isCliEditor(opener)) {
+  if (cdOnly) {
 #if defined(_WIN32) || defined(_WIN64)
-    userCommand =
-        "cmd /C \"cd /D \"" + projectPath.string() + "\" && " + opener + "\"";
+    userCommand = "cmd /K \"cd /D \"" + projectPath.string() + "\"\"";
 #else
-    userCommand =
-        "sh -c \"cd '" + projectPath.string() + "' && " + opener + " .\"";
-#endif
-  } else if (opener == "default") {
-#if defined(__APPLE__)
-    userCommand = "open \"" + projectPath.string() + "\"";
-#elif defined(__linux__)
-    userCommand = "xdg-open \"" + projectPath.string() + "\"";
-#elif defined(_WIN32) || defined(_WIN64)
-    userCommand = "explorer \"" + projectPath.string() + "\"";
+    userCommand = "sh -c \"cd '" + projectPath.string() + "' && exec $SHELL\"";
 #endif
   } else {
-    // Unknown program: assume GUI-style invocation
-    userCommand = opener + " \"" + projectPath.string() + "\"";
+    if (opener == "code" || opener == "vs") {
+      userCommand = "code \"" + projectPath.string() + "\"";
+    } else if (isCliEditor(opener)) {
+#if defined(_WIN32) || defined(_WIN64)
+      userCommand =
+          "cmd /C \"cd /D \"" + projectPath.string() + "\" && " + opener + "\"";
+#else
+      userCommand =
+          "sh -c \"cd '" + projectPath.string() + "' && " + opener + " .\"";
+#endif
+    } else if (opener == "default") {
+#if defined(__APPLE__)
+      userCommand = "open \"" + projectPath.string() + "\"";
+#elif defined(__linux__)
+      userCommand = "xdg-open \"" + projectPath.string() + "\"";
+#elif defined(_WIN32) || defined(_WIN64)
+      userCommand = "explorer \"" + projectPath.string() + "\"";
+#endif
+    } else {
+      userCommand = opener + " \"" + projectPath.string() + "\"";
+    }
   }
 
   std::cout << "Running: " << userCommand << std::endl;
